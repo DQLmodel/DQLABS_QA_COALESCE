@@ -1,0 +1,8 @@
+fileVersion: 1
+id: "17"
+mappingDefinitions:
+  SRC:
+    database: DQLABS_QA
+    schema: DQLABS_QA
+name: DQLABS_QA
+type: Environment
