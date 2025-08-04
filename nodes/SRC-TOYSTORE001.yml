@@ -1,0 +1,244 @@
+fileVersion: 1
+id: 164bc447-c11e-4fcb-9230-8f307e96de40
+name: /TOY/STORE001
+operation:
+  database: ""
+  deployEnabled: true
+  description: ""
+  locationName: SRC
+  metadata:
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 41cf146a-ec57-48b9-8fc0-2727ef99db3d
+          stepCounter: 164bc447-c11e-4fcb-9230-8f307e96de40
+        config: {}
+        dataType: VARCHAR(100)
+        defaultValue: ""
+        description: ""
+        name: /TOY/ID001
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 6cd4852a-07fc-4264-bc7a-ffb583d3a6ce
+          stepCounter: 164bc447-c11e-4fcb-9230-8f307e96de40
+        config: {}
+        dataType: VARCHAR(100)
+        defaultValue: ""
+        description: ""
+        name: /AF/NAME
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 6b73ad70-2e61-4e1a-a128-8bd6f2432617
+          stepCounter: 164bc447-c11e-4fcb-9230-8f307e96de40
+        config: {}
+        dataType: VARCHAR(100)
+        defaultValue: ""
+        description: ""
+        name: /AFUNIVERS/JUST/CHECK
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: f597b5e1-88c7-49f0-bbfb-3d0369d20f73
+          stepCounter: 164bc447-c11e-4fcb-9230-8f307e96de40
+        config: {}
+        dataType: DATE
+        defaultValue: ""
+        description: ""
+        name: /AF/INDATE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 917e2f9c-afb4-4776-8df7-d70a47f291bd
+          stepCounter: 164bc447-c11e-4fcb-9230-8f307e96de40
+        config: {}
+        dataType: DATE
+        defaultValue: ""
+        description: ""
+        name: /SELL/DATEP01
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 0fa40446-ed1f-42aa-9dd6-c194445ed574
+          stepCounter: 164bc447-c11e-4fcb-9230-8f307e96de40
+        config: {}
+        dataType: NUMBER(38,0)
+        defaultValue: ""
+        description: ""
+        name: /SELL/COSTINRS
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: a10e34b8-4614-418b-a1a7-d6dc2f1161f5
+          stepCounter: 164bc447-c11e-4fcb-9230-8f307e96de40
+        config: {}
+        dataType: VARCHAR(10)
+        defaultValue: ""
+        description: ""
+        name: TOT/ITEM/SOLD
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 4f545f54-ede5-4307-9fd3-909069babdea
+          stepCounter: 164bc447-c11e-4fcb-9230-8f307e96de40
+        config: {}
+        dataType: VARCHAR(100)
+        defaultValue: ""
+        description: ""
+        name: DSCODE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 82639df6-afa7-4a12-b364-08feb2a934f8
+          stepCounter: 164bc447-c11e-4fcb-9230-8f307e96de40
+        config: {}
+        dataType: BINARY(2)
+        defaultValue: ""
+        description: ""
+        name: Poppy
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 175289aa-2918-457d-a1db-2ce5e24258d3
+          stepCounter: 164bc447-c11e-4fcb-9230-8f307e96de40
+        config: {}
+        dataType: VARCHAR(100)
+        defaultValue: ""
+        description: ""
+        name: test/column
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 06f93fbb-a43b-40cf-bb0c-db83f17be3d8
+          stepCounter: 164bc447-c11e-4fcb-9230-8f307e96de40
+        config: {}
+        dataType: VARCHAR(100)
+        defaultValue: ""
+        description: ""
+        name: new
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 8655bbf4-4b90-4573-828d-2ea9e69b3fe4
+          stepCounter: 164bc447-c11e-4fcb-9230-8f307e96de40
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        name: 1164 Interest Exp Ext. Short
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+  name: /TOY/STORE001
+  schema: ""
+  sqlType: Source
+  type: sourceInput
+  version: 1
+type: Node
