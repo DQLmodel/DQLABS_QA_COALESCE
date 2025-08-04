@@ -1,0 +1,263 @@
+fileVersion: 1
+id: 9dc877a1-be83-49a0-bb8b-a10463e511c7
+name: VEHICLEDATA
+operation:
+  database: ""
+  deployEnabled: true
+  description: ""
+  locationName: SRC
+  metadata:
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 7ce8e70e-c9db-4489-804f-d33695221ed9
+          stepCounter: 9dc877a1-be83-49a0-bb8b-a10463e511c7
+        config: {}
+        dataType: NUMBER(38,0)
+        defaultValue: ""
+        description: ""
+        name: VEHICLEID
+        nullable: false
+        primaryKey: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 697bd741-3dcc-4f9d-ae37-2ec86fb8e1aa
+          stepCounter: 9dc877a1-be83-49a0-bb8b-a10463e511c7
+        config: {}
+        dataType: VARCHAR(17)
+        defaultValue: ""
+        description: ""
+        name: VIN
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 7dddbc6e-7c78-489c-9c60-36aa07013bd9
+          stepCounter: 9dc877a1-be83-49a0-bb8b-a10463e511c7
+        config: {}
+        dataType: VARCHAR(50)
+        defaultValue: ""
+        description: ""
+        name: MAKE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 9f971194-80b7-406c-9ec7-3a43045c871b
+          stepCounter: 9dc877a1-be83-49a0-bb8b-a10463e511c7
+        config: {}
+        dataType: VARCHAR(50)
+        defaultValue: ""
+        description: ""
+        name: MODEL
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 80014012-120e-4dc3-80f9-b21d2d201640
+          stepCounter: 9dc877a1-be83-49a0-bb8b-a10463e511c7
+        config: {}
+        dataType: NUMBER(38,0)
+        defaultValue: ""
+        description: ""
+        name: YEAR
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 3e6e2665-5c12-41ff-b3a7-d84673381a70
+          stepCounter: 9dc877a1-be83-49a0-bb8b-a10463e511c7
+        config: {}
+        dataType: NUMBER(38,0)
+        defaultValue: ""
+        description: ""
+        name: MILEAGE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 63e99453-969f-4e41-984a-4043c8e087d0
+          stepCounter: 9dc877a1-be83-49a0-bb8b-a10463e511c7
+        config: {}
+        dataType: VARCHAR(30)
+        defaultValue: ""
+        description: ""
+        name: COLOR
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: c0380c2f-0219-4901-8c9b-341876c51e97
+          stepCounter: 9dc877a1-be83-49a0-bb8b-a10463e511c7
+        config: {}
+        dataType: NUMBER(10,2)
+        defaultValue: ""
+        description: ""
+        name: PRICE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 4ad7c4d9-8473-4ad7-8a6d-db5124916122
+          stepCounter: 9dc877a1-be83-49a0-bb8b-a10463e511c7
+        config: {}
+        dataType: DATE
+        defaultValue: ""
+        description: ""
+        name: LASTSERVICEDATE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: a2de70db-73bb-4115-953f-f4774dd0ff29
+          stepCounter: 9dc877a1-be83-49a0-bb8b-a10463e511c7
+        config: {}
+        dataType: BOOLEAN
+        defaultValue: ""
+        description: ""
+        name: ISCERTIFIED
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: b991d2d9-a67b-4269-8717-dbe09dad2737
+          stepCounter: 9dc877a1-be83-49a0-bb8b-a10463e511c7
+        config: {}
+        dataType: VARCHAR(50)
+        defaultValue: ""
+        description: ""
+        name: DATASOURCE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: dbcfcfdd-ba5d-4f01-9ea6-d344364ea1e9
+          stepCounter: 9dc877a1-be83-49a0-bb8b-a10463e511c7
+        config: {}
+        dataType: VARCHAR(15)
+        defaultValue: ""
+        description: ""
+        name: VEHICLE_NUMBER
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 3355f62a-b590-40f1-adde-21de3510fd06
+          stepCounter: 9dc877a1-be83-49a0-bb8b-a10463e511c7
+        config: {}
+        dataType: VARCHAR(100)
+        defaultValue: ""
+        description: ""
+        name: BUYYEREMAIL
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+  name: VEHICLEDATA
+  schema: ""
+  sqlType: Source
+  type: sourceInput
+  version: 1
+type: Node

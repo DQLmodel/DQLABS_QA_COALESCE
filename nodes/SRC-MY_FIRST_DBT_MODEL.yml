@@ -1,0 +1,35 @@
+fileVersion: 1
+id: f5e0c7a3-1839-4507-97b3-2b4e6de57cce
+name: MY_FIRST_DBT_MODEL
+operation:
+  database: ""
+  deployEnabled: true
+  description: ""
+  locationName: SRC
+  metadata:
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 31c0f763-a6e9-4427-b8c5-8fe1f32c7758
+          stepCounter: f5e0c7a3-1839-4507-97b3-2b4e6de57cce
+        config: {}
+        dataType: NUMBER(1,0)
+        defaultValue: ""
+        description: ""
+        name: ID
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+  name: MY_FIRST_DBT_MODEL
+  schema: ""
+  sqlType: Source
+  type: sourceInput
+  version: 1
+type: Node

@@ -1,0 +1,6 @@
+excludeSelector: ""
+fileVersion: 1
+id: "9"
+includeSelector: "{subgraph:TEST_SUB_G1 } "
+name: SNOW_JOB1
+type: Job

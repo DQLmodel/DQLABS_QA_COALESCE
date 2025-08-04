@@ -1,0 +1,8 @@
+fileVersion: 1
+id: "6"
+name: TEST_SUB_G1
+steps:
+  - 32693822-dffc-4da8-bff8-3069675997b9
+  - 84d34cc8-1de3-4f02-9059-feacc5635315
+  - f5f28f70-663c-44fd-b7a2-ca460056dacf
+type: Subgraph

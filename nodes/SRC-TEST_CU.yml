@@ -1,0 +1,142 @@
+fileVersion: 1
+id: 32693822-dffc-4da8-bff8-3069675997b9
+name: TEST_CU
+operation:
+  config:
+    insertStrategy: INSERT
+    postSQL: ""
+    preSQL: ""
+    testsEnabled: true
+    truncateBefore: false
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: true
+  locationName: SRC
+  materializationType: view
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: d5dc51fe-55f0-45ee-87ca-a138971b4551
+          stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
+        config: {}
+        dataType: NUMBER
+        defaultValue: ""
+        description: ""
+        isBusinessKey: true
+        isChangeTracking: true
+        keyColumnType: None
+        name: CUSTOMER_ID
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: d1034761-0935-465d-bc21-552ee888ca82
+                stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
+            transform: ""
+        systemColumnType: None
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 8cd82029-86d2-41db-a5b7-0ed56ebbce39
+          stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        keyColumnType: None
+        name: FIRST_NAME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 54e6104e-50d1-49e0-bc43-d91b0831e49b
+                stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
+            transform: ""
+        systemColumnType: None
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: b2af3856-b750-4bbc-80cc-e37f2cc220bd
+          stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        keyColumnType: None
+        name: LAST_NAME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: bb9a3807-8a4d-4df9-a69e-5ab049ded33c
+                stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
+            transform: ""
+        systemColumnType: None
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: cb17024d-05e7-4d1b-9705-e9ea12a554a3
+          stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        keyColumnType: None
+        name: ACCOUNT_BALANCE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 58dcaf7d-486e-480d-9587-0065f8fcad10
+                stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
+            transform: ""
+        systemColumnType: None
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 2af75a95-1a79-446d-b2cb-deb4053bdf8f
+          stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
+        config: {}
+        dataType: VARCHAR(16777216)
+        defaultValue: ""
+        description: ""
+        keyColumnType: None
+        name: EMAIL_ADDRESS
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: b639019b-dadb-4c31-878c-1b795146f6a5
+                stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
+            transform: ""
+        systemColumnType: None
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases:
+          CUSTOMER_SF_TERM: 84d34cc8-1de3-4f02-9059-feacc5635315
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SRC
+            nodeName: CUSTOMER_SF_TERM
+        join:
+          joinCondition: FROM {{ ref('SRC', 'CUSTOMER_SF_TERM') }} "CUSTOMER_SF_TERM"
+        name: TEST_CU
+        noLinkRefs: []
+  name: TEST_CU
+  overrideSQL: false
+  schema: ""
+  sqlType: Stage
+  type: sql
+  version: 1
+type: Node
