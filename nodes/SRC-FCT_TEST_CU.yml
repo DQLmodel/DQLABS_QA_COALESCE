@@ -1,0 +1,149 @@
+fileVersion: 1
+id: 47f27197-1f83-4c38-bc51-2f9d45a265cf
+name: FCT_TEST_CU
+operation:
+  config:
+    postSQL: ""
+    preSQL: ""
+    testsEnabled: true
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: SRC
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - appliedColumnTests:
+          isDistinct: false
+        columnReference:
+          columnCounter: 93efd724-fddf-47c4-9931-48f166a4d665
+          stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
+        config: {}
+        dataType: NUMBER
+        description: ""
+        name: CUSTOMER_ID
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: d5dc51fe-55f0-45ee-87ca-a138971b4551
+                stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
+            transform: ""
+      - appliedColumnTests:
+          isDistinct: true
+        columnReference:
+          columnCounter: e5173745-68f8-444f-8d0b-fa70a3c7652a
+          stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: FIRST_NAME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 8cd82029-86d2-41db-a5b7-0ed56ebbce39
+                stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
+            transform: ""
+      - appliedColumnTests:
+          isDistinct: true
+        columnReference:
+          columnCounter: 5d2326ad-aeef-41f5-aeac-30c0bb701b85
+          stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: LAST_NAME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: b2af3856-b750-4bbc-80cc-e37f2cc220bd
+                stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
+            transform: ""
+      - appliedColumnTests:
+          isDistinct: true
+        columnReference:
+          columnCounter: bfbb5426-bea5-48f4-9283-f6743cc49339
+          stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: ACCOUNT_BALANCE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: cb17024d-05e7-4d1b-9705-e9ea12a554a3
+                stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
+            transform: ""
+      - appliedColumnTests:
+          isDistinct: true
+        columnReference:
+          columnCounter: 3a1b934d-a028-44f4-bcd3-d1f3ca0fad98
+          stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: EMAIL_ADDRESS
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 2af75a95-1a79-446d-b2cb-deb4053bdf8f
+                stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
+            transform: ""
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests:
+          isDistinct: true
+        columnReference:
+          columnCounter: d0c2690e-e391-4033-b05e-239c5fdd7e26
+          stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
+        config: {}
+        dataType: TIMESTAMP
+        defaultValue: ""
+        description: ""
+        isSystemCreateDate: true
+        name: SYSTEM_CREATE_DATE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: CAST(CURRENT_TIMESTAMP AS TIMESTAMP)
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests:
+          isDistinct: true
+        columnReference:
+          columnCounter: 85310586-9dcd-4d9a-bae7-24e72c7d99a5
+          stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
+        config: {}
+        dataType: TIMESTAMP
+        defaultValue: ""
+        description: ""
+        isSystemUpdateDate: true
+        name: SYSTEM_UPDATE_DATE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: CAST(CURRENT_TIMESTAMP AS TIMESTAMP)
+    cteString: ""
+    enabledColumnTestIDs:
+      - isDistinct
+    sourceMapping:
+      - aliases: {}
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SRC
+            nodeName: TEST_CU
+        join:
+          joinCondition: FROM {{ ref('SRC', 'TEST_CU') }} "TEST_CU"
+        name: FCT_TEST_CU
+        noLinkRefs: []
+  name: FCT_TEST_CU
+  overrideSQL: false
+  schema: ""
+  sqlType: Fact
+  type: sql
+  version: 1
+type: Node
