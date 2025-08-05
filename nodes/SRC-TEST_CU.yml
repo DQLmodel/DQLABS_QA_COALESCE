@@ -97,7 +97,7 @@ operation:
           - columnReferences:
               - columnCounter: 58dcaf7d-486e-480d-9587-0065f8fcad10
                 stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
-            transform: ""
+            transform: CAST('12345' AS VARCHAR(2000))
         systemColumnType: None
       - acceptedValues:
           strictMatch: true
