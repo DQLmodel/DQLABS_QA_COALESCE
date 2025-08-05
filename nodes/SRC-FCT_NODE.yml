@@ -66,4 +66,7 @@ operation:
   sqlType: Fact
   type: sql
   version: 1
+  tags:  # ✅ Add your tags here
+    - finance
+    - production_ready
 type: Node
