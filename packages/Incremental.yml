@@ -1,0 +1,22 @@
+config:
+  entities:
+    nodeTypes:
+      "230":
+        defaultStorageLocation: null
+        isDisabled: false
+      "278":
+        defaultStorageLocation: null
+        isDisabled: false
+      "281":
+        defaultStorageLocation: null
+        isDisabled: false
+      "394":
+        defaultStorageLocation: null
+        isDisabled: false
+  packageVariables: ""
+fileVersion: 1
+id: "@coalesce/snowflake/incremental-loading"
+name: Incremental
+packageID: "@coalesce/snowflake/incremental-loading"
+releaseID: 694d5ccd-70b4-4fff-a2f5-cab4e61ff864
+type: Package
