@@ -13,14 +13,20 @@ operation:
   description: ""
   isMultisource: true
   locationName: SRC
-  materializationType: view
+  materializationType: table
   metadata:
-    appliedNodeTests: []
+    appliedNodeTests:
+      - continueOnFailure: true
+        description: ""
+        name: Test
+        runOrder: After
+        templateString: " select customer_id from TEST_CU where customer_id >10"
     columns:
       - acceptedValues:
           strictMatch: true
           values: []
         appliedColumnTests:
+          hasNull: false
           isDistinct: false
         columnReference:
           columnCounter: d5dc51fe-55f0-45ee-87ca-a138971b4551
@@ -44,6 +50,7 @@ operation:
           strictMatch: true
           values: []
         appliedColumnTests:
+          hasNull: false
           isDistinct: true
         columnReference:
           columnCounter: 8cd82029-86d2-41db-a5b7-0ed56ebbce39
@@ -65,6 +72,7 @@ operation:
           strictMatch: true
           values: []
         appliedColumnTests:
+          hasNull: false
           isDistinct: true
         columnReference:
           columnCounter: b2af3856-b750-4bbc-80cc-e37f2cc220bd
@@ -86,6 +94,7 @@ operation:
           strictMatch: true
           values: []
         appliedColumnTests:
+          hasNull: false
           isDistinct: true
         columnReference:
           columnCounter: cb17024d-05e7-4d1b-9705-e9ea12a554a3
@@ -107,6 +116,7 @@ operation:
           strictMatch: true
           values: []
         appliedColumnTests:
+          hasNull: false
           isDistinct: true
         columnReference:
           columnCounter: 2af75a95-1a79-446d-b2cb-deb4053bdf8f
@@ -127,6 +137,7 @@ operation:
     cteString: ""
     enabledColumnTestIDs:
       - isDistinct
+      - hasNull
     sourceMapping:
       - aliases:
           CUSTOMER_SF_TERM: 84d34cc8-1de3-4f02-9059-feacc5635315
