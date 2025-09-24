@@ -1,0 +1,206 @@
+fileVersion: 1
+id: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+name: TOYSTORE
+operation:
+  database: ""
+  deployEnabled: true
+  description: ""
+  locationName: SRC
+  metadata:
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 99cf243b-06aa-4522-a4e5-c45df3913251
+          stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+        config: {}
+        dataType: VARCHAR(20)
+        defaultValue: ""
+        description: ""
+        name: TOY_ID
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 0dc10ddf-00c6-48d9-bf2d-ba90c319f88f
+          stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+        config: {}
+        dataType: VARCHAR(100)
+        defaultValue: ""
+        description: ""
+        name: TOY_NAME
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 182572c9-9cb5-4a8b-8865-78de9364ad76
+          stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+        config: {}
+        dataType: VARCHAR(100)
+        defaultValue: ""
+        description: ""
+        name: TOY_TYPE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: f5bde21b-6e7b-4f2e-a55c-47847a8b4c2f
+          stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+        config: {}
+        dataType: DATE
+        defaultValue: ""
+        description: ""
+        name: BUYDATEINWS
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 29a90e6b-f789-469c-82c9-234d7695c7a6
+          stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+        config: {}
+        dataType: DATE
+        defaultValue: ""
+        description: ""
+        name: SELLDATE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: c53cde0d-f760-4536-aa89-411eb6814459
+          stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+        config: {}
+        dataType: FLOAT
+        defaultValue: ""
+        description: ""
+        name: BUYCOSTINRS
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: e0c32e4e-f2bc-4950-a81e-befc890f92d7
+          stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+        config: {}
+        dataType: FLOAT
+        defaultValue: ""
+        description: ""
+        name: SELLCOSTINRS
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 3f303ad9-4bfa-4998-b38a-aa614183fcd9
+          stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+        config: {}
+        dataType: NUMBER(38,0)
+        defaultValue: ""
+        description: ""
+        name: TOTITEMSIN
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 6e02556e-0780-4894-900b-283600cc427c
+          stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+        config: {}
+        dataType: NUMBER(38,0)
+        defaultValue: ""
+        description: ""
+        name: TOTITEMSOLD
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: eb741740-da53-4304-8a76-f9407b0e1ed6
+          stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+        config: {}
+        dataType: VARCHAR(10000)
+        defaultValue: ""
+        description: ""
+        name: DSCODE
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+  name: TOYSTORE
+  schema: ""
+  sqlType: Source
+  type: sourceInput
+  version: 1
+type: Node

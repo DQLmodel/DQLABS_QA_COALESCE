@@ -1,0 +1,220 @@
+fileVersion: 1
+id: 25b41377-91f7-40c7-a264-0878de645d10
+name: STG_TOYSTORE
+operation:
+  config:
+    insertStrategy: INSERT
+    postSQL: ""
+    preSQL: ""
+    testsEnabled: true
+    truncateBefore: true
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: SRC
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 32e8a93e-a618-4c0f-b0cf-7aa4762f3f59
+          stepCounter: 25b41377-91f7-40c7-a264-0878de645d10
+        config: {}
+        dataType: VARCHAR(20)
+        description: ""
+        name: TOY_ID
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 99cf243b-06aa-4522-a4e5-c45df3913251
+                stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 5cb79f8a-9ce0-4b72-b974-c34cee44e39f
+          stepCounter: 25b41377-91f7-40c7-a264-0878de645d10
+        config: {}
+        dataType: VARCHAR(100)
+        description: ""
+        name: TOY_NAME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 0dc10ddf-00c6-48d9-bf2d-ba90c319f88f
+                stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 21362bcb-1613-43e4-9800-363b480e8778
+          stepCounter: 25b41377-91f7-40c7-a264-0878de645d10
+        config: {}
+        dataType: VARCHAR(100)
+        description: ""
+        name: TOY_TYPE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 182572c9-9cb5-4a8b-8865-78de9364ad76
+                stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: fe8b2e64-a91e-4254-af4f-f9924d873eb4
+          stepCounter: 25b41377-91f7-40c7-a264-0878de645d10
+        config: {}
+        dataType: DATE
+        description: ""
+        name: BUYDATEINWS
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: f5bde21b-6e7b-4f2e-a55c-47847a8b4c2f
+                stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 30ace2d4-3ce4-4b03-bb8a-a543c9cd7df3
+          stepCounter: 25b41377-91f7-40c7-a264-0878de645d10
+        config: {}
+        dataType: DATE
+        description: ""
+        name: SELLDATE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 29a90e6b-f789-469c-82c9-234d7695c7a6
+                stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 05dead6f-537f-49ce-9722-022c6f4866e8
+          stepCounter: 25b41377-91f7-40c7-a264-0878de645d10
+        config: {}
+        dataType: FLOAT
+        description: ""
+        name: BUYCOSTINRS
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: c53cde0d-f760-4536-aa89-411eb6814459
+                stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: ae7b04fa-aac4-4ad1-9a85-1db207ace691
+          stepCounter: 25b41377-91f7-40c7-a264-0878de645d10
+        config: {}
+        dataType: FLOAT
+        description: ""
+        name: SELLCOSTINRS
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: e0c32e4e-f2bc-4950-a81e-befc890f92d7
+                stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: bfd425f4-9d8f-47f8-9c64-4d4fb88b0be3
+          stepCounter: 25b41377-91f7-40c7-a264-0878de645d10
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: TOTITEMSIN
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 3f303ad9-4bfa-4998-b38a-aa614183fcd9
+                stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: aa0efb60-9ee5-4c7f-9a32-ec971f487893
+          stepCounter: 25b41377-91f7-40c7-a264-0878de645d10
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: TOTITEMSOLD
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 6e02556e-0780-4894-900b-283600cc427c
+                stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: bbe3f994-6ffd-4cee-9740-eafa8e274340
+          stepCounter: 25b41377-91f7-40c7-a264-0878de645d10
+        config: {}
+        dataType: VARCHAR(10000)
+        description: ""
+        name: DSCODE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: eb741740-da53-4304-8a76-f9407b0e1ed6
+                stepCounter: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+            transform: ""
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 311bd3d6-c767-4277-879d-787381b119da
+          stepCounter: 25b41377-91f7-40c7-a264-0878de645d10
+        config: {}
+        dataType: NUMBER(38,0)
+        defaultValue: ""
+        description: ""
+        keyColumnType: None
+        name: BALANCE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: "0"
+                stepCounter: "0"
+            transform: TOTITEMSIN-TOTITEMSOLD
+        systemColumnType: None
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 0f31b387-368a-4bea-8002-688fd968f220
+          stepCounter: 25b41377-91f7-40c7-a264-0878de645d10
+        config: {}
+        dataType: FLOAT
+        defaultValue: ""
+        description: ""
+        keyColumnType: None
+        name: COST_BALANCE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: "0"
+                stepCounter: "0"
+            transform: SELLCOSTINRS-BUYCOSTINRS
+        systemColumnType: None
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases:
+          TOYSTORE: bf950d36-c0f8-459b-a95f-1ba5a538eb39
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SRC
+            nodeName: TOYSTORE
+        join:
+          joinCondition: FROM {{ ref('SRC', 'TOYSTORE') }} "TOYSTORE"
+        name: STG_TOYSTORE
+        noLinkRefs: []
+  name: STG_TOYSTORE
+  overrideSQL: false
+  schema: ""
+  sqlType: Stage
+  type: sql
+  version: 1
+type: Node
