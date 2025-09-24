@@ -95,7 +95,7 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences: []
-            transform: CAST(CURRENT_TIMESTAMP AS TIMESTAMP)
+            transform: ""
       - acceptedValues:
           strictMatch: true
           values: []
@@ -114,7 +114,7 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences: []
-            transform: CAST('2999-12-31 00:00:00' AS TIMESTAMP)
+            transform: ""
       - acceptedValues:
           strictMatch: true
           values: []
@@ -133,7 +133,7 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences: []
-            transform: CAST(CURRENT_TIMESTAMP AS TIMESTAMP)
+            transform: ""
       - acceptedValues:
           strictMatch: true
           values: []
@@ -152,7 +152,7 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences: []
-            transform: CAST(CURRENT_TIMESTAMP AS TIMESTAMP)
+            transform: ""
       - acceptedValues:
           strictMatch: true
           values: []
@@ -173,7 +173,8 @@ operation:
           - columnReferences:
               - columnCounter: d1034761-0935-465d-bc21-552ee888ca82
                 stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
-            transform: IFNULL(customer_id, 0)
+            transform: |
+              customer_id + 1000
         systemColumnType: None
     cteString: ""
     enabledColumnTestIDs:
