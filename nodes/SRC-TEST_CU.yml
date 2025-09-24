@@ -15,12 +15,7 @@ operation:
   locationName: SRC
   materializationType: table
   metadata:
-    appliedNodeTests:
-      - continueOnFailure: true
-        description: ""
-        name: Test
-        runOrder: After
-        templateString: " select customer_id from TEST_CU where customer_id >10"
+    appliedNodeTests: []
     columns:
       - acceptedValues:
           strictMatch: true
@@ -44,7 +39,7 @@ operation:
           - columnReferences:
               - columnCounter: d1034761-0935-465d-bc21-552ee888ca82
                 stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
-            transform: ""
+            transform: CUSTOMER_ID+1000
         systemColumnType: None
       - acceptedValues:
           strictMatch: true
@@ -110,7 +105,7 @@ operation:
           - columnReferences:
               - columnCounter: 58dcaf7d-486e-480d-9587-0065f8fcad10
                 stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
-            transform: CAST('12345' AS VARCHAR(2000))
+            transform: ""
         systemColumnType: None
       - acceptedValues:
           strictMatch: true
