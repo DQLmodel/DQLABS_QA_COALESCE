@@ -1,6 +1,6 @@
 fileVersion: 1
 id: 8aa11b05-bd4d-4f59-851a-54a1c99f2fc2
-name: STG_TOYSTORE1
+name: STG_TOYSTORE2
 operation:
   config:
     insertStrategy: INSERT
@@ -157,6 +157,26 @@ operation:
               - columnCounter: bbe3f994-6ffd-4cee-9740-eafa8e274340
                 stepCounter: 25b41377-91f7-40c7-a264-0878de645d10
             transform: ""
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 9bcd05e1-2c5b-4d30-8365-a8233a09c6d1
+          stepCounter: 8aa11b05-bd4d-4f59-851a-54a1c99f2fc2
+        config: {}
+        dataType: FLOAT
+        defaultValue: ""
+        description: ""
+        keyColumnType: None
+        name: COST BALANCE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: "0"
+                stepCounter: "0"
+            transform: SELLCOSTINRS-BUYCOSTINRS
+        systemColumnType: None
     cteString: ""
     enabledColumnTestIDs: []
     sourceMapping:
@@ -169,9 +189,9 @@ operation:
             nodeName: STG_TOYSTORE
         join:
           joinCondition: FROM {{ ref('SRC', 'STG_TOYSTORE') }} "STG_TOYSTORE"
-        name: STG_TOYSTORE1
+        name: STG_TOYSTORE2
         noLinkRefs: []
-  name: STG_TOYSTORE1
+  name: STG_TOYSTORE2
   overrideSQL: false
   schema: ""
   sqlType: Stage

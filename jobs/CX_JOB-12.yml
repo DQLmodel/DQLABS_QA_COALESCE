@@ -1,0 +1,6 @@
+excludeSelector: ""
+fileVersion: 1
+id: "12"
+includeSelector: "{ location: SRC name: TOYSTORE } OR { location: SRC name: STG_TOYSTORE } OR { location: SRC name: STG_TOYSTORE1 } OR { location: SRC name: STG_TOYSTORE2 }"
+name: CX_JOB
+type: Job
