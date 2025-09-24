@@ -61,7 +61,8 @@ operation:
           - columnReferences:
               - columnCounter: 54e6104e-50d1-49e0-bc43-d91b0831e49b
                 stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
-            transform: ""
+            transform: |
+              CASE WHEN FIRST_NAME = '' THEN 'ROSE' ELSE FIRST_NAME END
         systemColumnType: None
       - acceptedValues:
           strictMatch: true
