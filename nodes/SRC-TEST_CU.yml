@@ -84,7 +84,8 @@ operation:
           - columnReferences:
               - columnCounter: bb9a3807-8a4d-4df9-a69e-5ab049ded33c
                 stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
-            transform: ""
+            transform: |
+              CASE WHEN LAST_NAME = '' THEN 'PRINCE' ELSE LAST_NAME END
         systemColumnType: None
       - acceptedValues:
           strictMatch: true
