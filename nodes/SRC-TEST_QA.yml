@@ -178,7 +178,7 @@ operation:
           - columnReferences:
               - columnCounter: d1034761-0935-465d-bc21-552ee888ca82
                 stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
-            transform: customer_id+107
+            transform: customer_id+105
         systemColumnType: None
     cteString: ""
     enabledColumnTestIDs:
