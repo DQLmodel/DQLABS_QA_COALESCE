@@ -19,6 +19,11 @@ operation:
         name: Test
         runOrder: After
         templateString: select * from "DQLABS_QA"."DQLABS_QA"."TEST_QA" where CUSTOMER_ID >10
+      - continueOnFailure: true
+        description: ""
+        name: Test 1
+        runOrder: After
+        templateString: select * from "DQLABS_QA"."DQLABS_QA"."TEST_QA" where CUSTOMER_ID <10
     columns:
       - acceptedValues:
           strictMatch: true
@@ -173,7 +178,7 @@ operation:
           - columnReferences:
               - columnCounter: d1034761-0935-465d-bc21-552ee888ca82
                 stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
-            transform: customer_id+107
+            transform: customer_id+1090
         systemColumnType: None
     cteString: ""
     enabledColumnTestIDs:
