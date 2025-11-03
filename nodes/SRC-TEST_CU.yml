@@ -13,7 +13,7 @@ operation:
   description: ""
   isMultisource: true
   locationName: SRC
-  materializationType: view
+  materializationType: table
   metadata:
     appliedNodeTests: []
     columns:
@@ -21,6 +21,7 @@ operation:
           strictMatch: true
           values: []
         appliedColumnTests:
+          hasNull: false
           isDistinct: false
         columnReference:
           columnCounter: d5dc51fe-55f0-45ee-87ca-a138971b4551
@@ -38,12 +39,13 @@ operation:
           - columnReferences:
               - columnCounter: d1034761-0935-465d-bc21-552ee888ca82
                 stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
-            transform: ""
+            transform: CUSTOMER_ID+1000
         systemColumnType: None
       - acceptedValues:
           strictMatch: true
           values: []
         appliedColumnTests:
+          hasNull: false
           isDistinct: true
         columnReference:
           columnCounter: 8cd82029-86d2-41db-a5b7-0ed56ebbce39
@@ -59,12 +61,14 @@ operation:
           - columnReferences:
               - columnCounter: 54e6104e-50d1-49e0-bc43-d91b0831e49b
                 stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
-            transform: ""
+            transform: |
+              CASE WHEN FIRST_NAME = '' THEN 'ROSE' ELSE FIRST_NAME END
         systemColumnType: None
       - acceptedValues:
           strictMatch: true
           values: []
         appliedColumnTests:
+          hasNull: false
           isDistinct: true
         columnReference:
           columnCounter: b2af3856-b750-4bbc-80cc-e37f2cc220bd
@@ -80,12 +84,14 @@ operation:
           - columnReferences:
               - columnCounter: bb9a3807-8a4d-4df9-a69e-5ab049ded33c
                 stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
-            transform: ""
+            transform: |
+              CASE WHEN LAST_NAME = '' THEN 'PRINCE' ELSE LAST_NAME END
         systemColumnType: None
       - acceptedValues:
           strictMatch: true
           values: []
         appliedColumnTests:
+          hasNull: false
           isDistinct: true
         columnReference:
           columnCounter: cb17024d-05e7-4d1b-9705-e9ea12a554a3
@@ -101,12 +107,13 @@ operation:
           - columnReferences:
               - columnCounter: 58dcaf7d-486e-480d-9587-0065f8fcad10
                 stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
-            transform: CAST('12345' AS VARCHAR(2000))
+            transform: ""
         systemColumnType: None
       - acceptedValues:
           strictMatch: true
           values: []
         appliedColumnTests:
+          hasNull: false
           isDistinct: true
         columnReference:
           columnCounter: 2af75a95-1a79-446d-b2cb-deb4053bdf8f
@@ -127,6 +134,7 @@ operation:
     cteString: ""
     enabledColumnTestIDs:
       - isDistinct
+      - hasNull
     sourceMapping:
       - aliases:
           CUSTOMER_SF_TERM: 84d34cc8-1de3-4f02-9059-feacc5635315

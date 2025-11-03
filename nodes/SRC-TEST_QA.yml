@@ -13,7 +13,12 @@ operation:
   locationName: SRC
   materializationType: table
   metadata:
-    appliedNodeTests: []
+    appliedNodeTests:
+      - continueOnFailure: true
+        description: ""
+        name: Test
+        runOrder: After
+        templateString: select * from "DQLABS_QA"."DQLABS_QA"."TEST_QA" where CUSTOMER_ID >10
     columns:
       - acceptedValues:
           strictMatch: true
@@ -90,7 +95,7 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences: []
-            transform: CAST(CURRENT_TIMESTAMP AS TIMESTAMP)
+            transform: ""
       - acceptedValues:
           strictMatch: true
           values: []
@@ -109,7 +114,7 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences: []
-            transform: CAST('2999-12-31 00:00:00' AS TIMESTAMP)
+            transform: ""
       - acceptedValues:
           strictMatch: true
           values: []
@@ -128,7 +133,7 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences: []
-            transform: CAST(CURRENT_TIMESTAMP AS TIMESTAMP)
+            transform: ""
       - acceptedValues:
           strictMatch: true
           values: []
@@ -147,7 +152,7 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences: []
-            transform: CAST(CURRENT_TIMESTAMP AS TIMESTAMP)
+            transform: ""
       - acceptedValues:
           strictMatch: true
           values: []
