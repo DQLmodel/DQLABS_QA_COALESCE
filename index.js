@@ -93,7 +93,7 @@ const getChangedFiles = async () => {
 
 const getTasks = async () => {
   try {
-    const taskUrl = `${dqlabs_base_url}api/pipeline/job`;
+    const taskUrl = `${dqlabs_base_url}api/pipeline/job/`;
     const payload = {
       chartType: 0,
       search: {},
