@@ -28,7 +28,7 @@ operation:
         description: ""
         name: Test 2
         runOrder: After
-        templateString: select * from "DQLABS_QA"."DQLABS_QA"."TEST_QA" where CUSTOMER_ID =10
+        templateString: select * from "DQLABS_QA"."DQLABS_QA"."TEST_QA" where CUSTOMER_ID =100
     columns:
       - acceptedValues:
           strictMatch: true
