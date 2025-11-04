@@ -17,7 +17,7 @@ operation:
   metadata:
     appliedNodeTests: []
     columns:
-       - acceptedValues:
+      - acceptedValues:
           strictMatch: true
           values: []
         appliedColumnTests:
