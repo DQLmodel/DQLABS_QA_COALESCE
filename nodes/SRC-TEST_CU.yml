@@ -17,6 +17,30 @@ operation:
   metadata:
     appliedNodeTests: []
     columns:
+       - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests:
+          hasNull: false
+          isDistinct: false
+        columnReference:
+          columnCounter: d5dc51fe-55f0-45ee-87ca-a138971b4551
+          stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
+        config: {}
+        dataType: NUMBER
+        defaultValue: ""
+        description: ""
+        isBusinessKey: true
+        isChangeTracking: true
+        keyColumnType: None
+        name: CUSTOMER_ID
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: d1034761-0935-465d-bc21-552ee888ca82
+                stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
+            transform: CUSTOMER_ID+100
+        systemColumnType: None
       - acceptedValues:
           strictMatch: true
           values: []
