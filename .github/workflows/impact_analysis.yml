@@ -33,7 +33,7 @@ jobs:
 
       - name: Run DQLabs Impact Analysis
         id: impact-analysis
-        uses: DQLmodel/DQLABS_QA_COALESCE@main
+        uses: DQLmodel/DQLABS_QA_COALESCE@PRe
         with:
           api_client_id: ${{ secrets.DQLABS_API_CLIENT_ID }}
           api_client_secret: ${{ secrets.DQLABS_API_CLIENT_SECRET }}
