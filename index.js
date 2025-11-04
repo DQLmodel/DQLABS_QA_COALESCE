@@ -405,7 +405,7 @@ const run = async () => {
     // Use case-insensitive matching for connection_type
     const coalesceTasks = tasks.filter(task => {
       const connType = (task?.connection_type || "").toLowerCase();
-      return connType === "coalesce" || connType.includes("coalesce");
+      return connType === "coalesce_pipeline" || connType.includes("coalesce_pipeline");
     });
     
     core.info(`[MAIN] Found ${coalesceTasks.length} Coalesce tasks out of ${tasks.length} total tasks`);
