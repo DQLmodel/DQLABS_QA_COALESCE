@@ -39,7 +39,7 @@ operation:
           - columnReferences:
               - columnCounter: d1034761-0935-465d-bc21-552ee888ca82
                 stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
-            transform: CUSTOMER_ID+109
+            transform: CUSTOMER_ID+10
         systemColumnType: None
       - acceptedValues:
           strictMatch: true
