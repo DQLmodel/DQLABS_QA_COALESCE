@@ -34,25 +34,6 @@ operation:
           strictMatch: true
           values: []
         appliedColumnTests:
-          hasNull: true
-          isDistinct: true
-        columnReference:
-          columnCounter: 36d4473d-f219-43ce-8823-ec376ef172c5
-          stepCounter: f5f28f70-663c-44fd-b7a2-ca460056dacf
-        config: {}
-        dataType: NUMBER
-        defaultValue: ""
-        description: ""
-        isSurrogateKey: true
-        name: DIM_NODE_KEY
-        nullable: true
-        sourceColumnReferences:
-          - columnReferences: []
-            transform: ""
-      - acceptedValues:
-          strictMatch: true
-          values: []
-        appliedColumnTests:
           hasNull: false
           isDistinct: false
         columnReference:
