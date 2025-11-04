@@ -468,7 +468,7 @@ const run = async () => {
       const directImpact = await getImpactAnalysisData(
         task.asset_id,
         task.connection_id,
-        task.entity,
+        task.asset_id,
         true // isDirect = true
       );
 
