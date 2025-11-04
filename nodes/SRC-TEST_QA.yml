@@ -24,6 +24,11 @@ operation:
         name: Test 1
         runOrder: After
         templateString: select * from "DQLABS_QA"."DQLABS_QA"."TEST_QA" where CUSTOMER_ID <10
+      - continueOnFailure: true
+        description: ""
+        name: Test 2
+        runOrder: After
+        templateString: select * from "DQLABS_QA"."DQLABS_QA"."TEST_QA" where CUSTOMER_ID =10
     columns:
       - acceptedValues:
           strictMatch: true
