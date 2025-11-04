@@ -1,0 +1,57 @@
+
+name: "DBT Impact Analysis on PR"
+
+on:
+  pull_request:
+    paths:
+      - '**/*.sql'
+      - '**/*.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  impact-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR code (head)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get changed DBT files
+        id: changes
+        uses: tj-actions/changed-files@v46
+        with:
+          files: |
+            **/*.sql
+            **/*.yml
+          include_removed: true
+          include_renamed: true
+          separator: ","
+
+      - name: Run DQLabs Impact Analysis
+        id: impact-analysis
+        uses: DQLmodel/DBT_model@main
+        with:
+          api_client_id: ${{ secrets.DQLABS_API_CLIENT_ID }}
+          api_client_secret: ${{ secrets.DQLABS_API_CLIENT_SECRET }}
+          changed_files_list: ${{ steps.changes.outputs.all_changed_files }},${{ steps.changes.outputs.deleted_files }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dqlabs_base_url: ${{ secrets.DQLABS_BASE_URL }}
+          dqlabs_createlink_url: ${{ secrets.DQLABS_CREATELINK_URL }}
+
+      - name: Show Summary in Logs
+        run: echo "${{ steps.impact-analysis.outputs.impact_markdown }}"
+
+      - name: Debug changed files
+        run: |
+          echo "All files: ${{ steps.changes.outputs.all_files }}"
+          echo "Added files: ${{ steps.changes.outputs.added_files }}"
+          echo "Modified files: ${{ steps.changes.outputs.modified_files }}"
+          echo "Removed files: ${{ steps.changes.outputs.removed_files }}"
+          echo "Renamed files: ${{ steps.changes.outputs.renamed_files }}"
+          echo "All deleted_files	 files: ${{ steps.changes.outputs.deleted_files }}"
+          echo "All deleted_files	 files: ${{ steps.changes.outputs }}"
+          echo "Combined changed_files_list: ${{ steps.changes.outputs.all_changed_files }},${{ steps.changes.outputs.removed_files }}"
