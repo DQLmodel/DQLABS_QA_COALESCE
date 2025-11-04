@@ -1,5 +1,5 @@
 name: "DQLabs Impact Analysis"
-description: "Performs DBT model impact analysis via DQLabs API during PRs and posts the results as a PR comment"
+description: "Performs Coalesce YML file impact analysis via DQLabs API during PRs and posts the results as a PR comment"
 author: "YourOrg"
 
 inputs:
@@ -12,7 +12,7 @@ inputs:
     required: true
 
   changed_files_list:
-    description: "Comma-separated list of changed DBT model files"
+    description: "Comma-separated list of changed Coalesce YML files"
     required: true
 
   github_token:
@@ -28,7 +28,7 @@ inputs:
     required: true
 
   dqlabs_configurable_keys:
-    description: "Comma-separated list of keys to include in the impact analysis report. Available keys: direct_column_count, indirect_column_count, direct_asset_count, indirect_asset_count, direct_column_list, indirect_column_list, direct_asset_list, indirect_asset_list, sql_column_changes, yml_column_changes"
+    description: "Comma-separated list of keys to include in the impact analysis report. Available keys: direct_column_count, indirect_column_count, direct_asset_count, indirect_asset_count, direct_column_list, indirect_column_list, direct_asset_list, indirect_asset_list, yml_column_changes"
     required: false
     default: ""
 

@@ -5,18 +5,18 @@ const fs = require("fs");
 const path = require("path");
 const yaml = require("js-yaml");
 
-// Import utilities with safe fallbacks
+// Import utilities with safe fallbacks for Coalesce YML files
 const { 
-  extractColumnsFromSQL = () => [], 
-  getFileContent = () => null, 
-  extractColumnsFromYML = () => [] 
-} = require("./sql-parser") || {};
+  extractColumnsFromYML = () => [],
+  extractModelNameFromYML = () => null,
+  getFileContent = () => null
+} = require("./yml-parser") || {};
 
 // Get inputs with defaults
 const clientId = core.getInput("api_client_id") || "";
 const clientSecret = core.getInput("api_client_secret") || "";
 const changedFilesList = core.getInput("changed_files_list") || "";
-const githubToken = core.getInput("GITHUB_TOKEN") || "";
+const githubToken = core.getInput("github_token") || "";
 const dqlabs_base_url = core.getInput("dqlabs_base_url") || "";
 const dqlabs_createlink_url = core.getInput("dqlabs_createlink_url") || "";
 const dqlabs_configurable_keys = core.getInput("dqlabs_configurable_keys") || "";
@@ -36,7 +36,6 @@ const parseConfigurableKeys = (keysString) => {
       showIndirectColumnList: true,
       showDirectAssetList: true,
       showIndirectAssetList: true,
-      showSqlColumnChanges: true,
       showYmlColumnChanges: true
     };
   }
@@ -52,7 +51,6 @@ const parseConfigurableKeys = (keysString) => {
     showIndirectColumnList: keys.includes('indirect_column_list'),
     showDirectAssetList: keys.includes('direct_asset_list'),
     showIndirectAssetList: keys.includes('indirect_asset_list'),
-    showSqlColumnChanges: keys.includes('sql_column_changes'),
     showYmlColumnChanges: keys.includes('yml_column_changes')
   };
 };
@@ -95,7 +93,7 @@ const getChangedFiles = async () => {
 
 const getTasks = async () => {
   try {
-    const taskUrl = `${dqlabs_base_url}/api/pipeline/task/`;
+    const taskUrl = `${dqlabs_base_url}/api/pipeline/job`;
     const payload = {
       chartType: 0,
       search: {},
@@ -256,7 +254,7 @@ const getColumnLevelImpactAnalysis = async (asset_id, connection_id, entity, cha
   }
 };
 
-// Enhanced function to extract changed columns from file changes
+// Enhanced function to extract changed columns from YML file changes
 const extractChangedColumns = async (changedFiles) => {
   const changedColumns = {
     added: [],
@@ -266,7 +264,7 @@ const extractChangedColumns = async (changedFiles) => {
 
   core.info(`[extractChangedColumns] Processing ${changedFiles.length} changed files`);
 
-  for (const file of changedFiles.filter(f => f && f.endsWith(".sql"))) {
+  for (const file of changedFiles.filter(f => f && f.endsWith(".yml"))) {
     try {
       core.info(`[extractChangedColumns] Processing file: ${file}`);
       
@@ -286,22 +284,26 @@ const extractChangedColumns = async (changedFiles) => {
       core.info(`[extractChangedColumns] Base content length: ${baseContent ? baseContent.length : 0}`);
       core.info(`[extractChangedColumns] Head content length: ${headContent.length}`);
 
-      const baseCols = safeArray(baseContent ? extractColumnsFromSQL(baseContent) : []);
-      const headCols = safeArray(extractColumnsFromSQL(headContent));
+      const baseCols = safeArray(baseContent ? extractColumnsFromYML(baseContent, file) : []);
+      const headCols = safeArray(extractColumnsFromYML(headContent, file));
 
-      core.info(`[extractChangedColumns] Base columns for ${file}: [${baseCols.join(', ')}]`);
-      core.info(`[extractChangedColumns] Head columns for ${file}: [${headCols.join(', ')}]`);
+      // Extract just the names for comparison
+      const baseColNames = baseCols.map(col => col.name);
+      const headColNames = headCols.map(col => col.name);
+
+      core.info(`[extractChangedColumns] Base columns for ${file}: [${baseColNames.join(', ')}]`);
+      core.info(`[extractChangedColumns] Head columns for ${file}: [${headColNames.join(', ')}]`);
 
       // Find added columns
-      const addedCols = headCols.filter(col => !baseCols.includes(col));
+      const addedCols = headCols.filter(col => !baseColNames.includes(col.name));
       // Find removed columns
-      const removedCols = baseCols.filter(col => !headCols.includes(col));
+      const removedCols = baseCols.filter(col => !headColNames.includes(col.name));
 
-      core.info(`[extractChangedColumns] Added columns for ${file}: [${addedCols.join(', ')}]`);
-      core.info(`[extractChangedColumns] Removed columns for ${file}: [${removedCols.join(', ')}]`);
+      core.info(`[extractChangedColumns] Added columns for ${file}: [${addedCols.map(c => c.name).join(', ')}]`);
+      core.info(`[extractChangedColumns] Removed columns for ${file}: [${removedCols.map(c => c.name).join(', ')}]`);
 
-      changedColumns.added.push(...addedCols.map(col => ({ column: col, file })));
-      changedColumns.removed.push(...removedCols.map(col => ({ column: col, file })));
+      changedColumns.added.push(...addedCols.map(col => ({ column: col.name, file })));
+      changedColumns.removed.push(...removedCols.map(col => ({ column: col.name, file })));
     } catch (error) {
       core.error(`[extractChangedColumns] Error extracting columns from ${file}: ${error.message}`);
       core.error(`[extractChangedColumns] Stack trace: ${error.stack}`);
@@ -320,6 +322,14 @@ const run = async () => {
     // Get changed files safely
     const changedFiles = safeArray(await getChangedFiles());
     core.info(`Found ${changedFiles.length} changed files`);
+    
+    // Log YML files for debugging
+    const ymlFiles = changedFiles.filter(f => f && f.endsWith(".yml"));
+    if (ymlFiles.length > 0) {
+      core.info(`Found ${ymlFiles.length} YML files: [${ymlFiles.join(', ')}]`);
+    } else {
+      core.warning(`No YML files found in changed files. All files: [${changedFiles.join(', ')}]`);
+    }
 
     // Extract changed columns for column-level analysis
     const changedColumns = await extractChangedColumns(changedFiles);
@@ -333,28 +343,102 @@ const run = async () => {
       core.info(`[MAIN] Removed columns: ${JSON.stringify(changedColumns.removed)}`);
     }
 
-    // Process changed SQL models
-    const changedModels = changedFiles
-      .filter(file => file && typeof file === "string" && file.endsWith(".sql"))
-      .map(file => path.basename(file, path.extname(file)))
+    // Process changed YML files (Coalesce nodes)
+    const changedYmlFiles = changedFiles
+      .filter(file => file && typeof file === "string" && file.endsWith(".yml"))
       .filter(Boolean);
+
+    // Extract model names from YML files
+    const changedModels = [];
+    const modelNameToFileMap = {};
+    
+    core.info(`[MAIN] Processing ${changedYmlFiles.length} changed YML files`);
+    
+    for (const file of changedYmlFiles) {
+      try {
+        const headSha = process.env.GITHUB_HEAD_SHA || github.context.payload.pull_request?.head?.sha;
+        if (!headSha) {
+          core.warning(`[MAIN] No head SHA found, trying to read file directly: ${file}`);
+        }
+        
+        const headContent = await getFileContent(headSha, file);
+        if (!headContent) {
+          core.warning(`[MAIN] Could not read content for ${file}, trying to read from filesystem`);
+          // Fallback: try reading from filesystem
+          try {
+            const fsContent = fs.readFileSync(file, 'utf8');
+            if (fsContent) {
+              const modelName = extractModelNameFromYML(fsContent, file);
+              if (modelName) {
+                changedModels.push(modelName);
+                modelNameToFileMap[modelName] = file;
+                core.info(`[MAIN] Extracted model name '${modelName}' from ${file} (via filesystem)`);
+              }
+            }
+          } catch (fsError) {
+            core.error(`[MAIN] Could not read ${file} from filesystem: ${fsError.message}`);
+          }
+          continue;
+        }
+        
+        const modelName = extractModelNameFromYML(headContent, file);
+        if (modelName) {
+          changedModels.push(modelName);
+          modelNameToFileMap[modelName] = file;
+          core.info(`[MAIN] Extracted model name '${modelName}' from ${file}`);
+        } else {
+          core.warning(`[MAIN] Could not extract model name from ${file}`);
+        }
+      } catch (error) {
+        core.error(`[MAIN] Error extracting model name from ${file}: ${error.message}`);
+        core.error(`[MAIN] Stack trace: ${error.stack}`);
+      }
+    }
+
+    core.info(`[MAIN] Found ${changedModels.length} changed models from YML files: [${changedModels.join(', ')}]`);
 
     // Get tasks safely
     const tasks = await getTasks();
     core.info(`[MAIN] Retrieved ${tasks.length} tasks from DQLabs`);
 
-    // Match tasks with changed models
-    const matchedTasks = tasks
-      .filter(task => task?.connection_type === "dbt")
-      .filter(task => changedModels.includes(task?.name))
-      .map(task => ({
-        ...task,
-        entity: task?.task_id || "",
-        filePath: changedFiles.find(f => path.basename(f, path.extname(f)) === task.name)
-      }))
+    // Match tasks with changed models (filter for Coalesce connection type)
+    // Use case-insensitive matching for connection_type
+    const coalesceTasks = tasks.filter(task => {
+      const connType = (task?.connection_type || "").toLowerCase();
+      return connType === "coalesce" || connType.includes("coalesce");
+    });
+    
+    core.info(`[MAIN] Found ${coalesceTasks.length} Coalesce tasks out of ${tasks.length} total tasks`);
+    
+    // Log all Coalesce task names for debugging
+    if (coalesceTasks.length > 0) {
+      core.info(`[MAIN] Coalesce task names: [${coalesceTasks.map(t => t.name).join(', ')}]`);
+    }
+    
+    // Use case-insensitive matching for model names
+    const matchedTasks = coalesceTasks
+      .filter(task => {
+        const taskName = (task?.name || "").toLowerCase();
+        return changedModels.some(model => model.toLowerCase() === taskName);
+      })
+      .map(task => {
+        // Find matching model (case-insensitive)
+        const matchingModel = changedModels.find(model => 
+          model.toLowerCase() === (task?.name || "").toLowerCase()
+        );
+        return {
+          ...task,
+          entity: task?.task_id || "",
+          filePath: matchingModel ? modelNameToFileMap[matchingModel] : null
+        };
+      })
       .filter(task => task.filePath); // Ensure we have the file path
 
     core.info(`[MAIN] Found ${matchedTasks.length} matched tasks for changed models`);
+    if (matchedTasks.length === 0 && changedModels.length > 0) {
+      core.warning(`[MAIN] No tasks matched! Changed models: [${changedModels.join(', ')}]`);
+      core.warning(`[MAIN] Available Coalesce tasks: [${coalesceTasks.map(t => t.name).join(', ')}]`);
+    }
     matchedTasks.forEach(task => {
       core.info(`[MAIN] Matched task: ${task.name} (${task.entity}) -> ${task.filePath}`);
     });
@@ -738,8 +822,8 @@ const run = async () => {
     };
 
 
-    // Process column changes function
-    const processColumnChanges = async (extension, extractor, isYml = false) => {
+    // Process column changes function for YML files
+    const processColumnChanges = async (extension, extractor) => {
       const changes = [];
       let added = [];
       let removed = [];
@@ -756,37 +840,24 @@ const run = async () => {
           const baseCols = safeArray(baseContent ? extractor(baseContent, file) : []);
           const headCols = safeArray(extractor(headContent, file));
 
-          // Handle YML columns differently
-          if (isYml) {
-            // Extract just the names for comparison
-            const baseColNames = baseCols.map(col => col.name);
-            const headColNames = headCols.map(col => col.name);
+          // Handle YML columns (Coalesce format)
+          // Extract just the names for comparison
+          const baseColNames = baseCols.map(col => col.name);
+          const headColNames = headCols.map(col => col.name);
 
-            const addedCols = headCols.filter(col => !baseColNames.includes(col.name));
-            const removedCols = baseCols.filter(col => !headColNames.includes(col.name));
+          const addedCols = headCols.filter(col => !baseColNames.includes(col.name));
+          const removedCols = baseCols.filter(col => !headColNames.includes(col.name));
 
-            // Get full column info for added/removed
-            added.push(...addedCols);
-            removed.push(...removedCols);
+          // Get full column info for added/removed
+          added.push(...addedCols);
+          removed.push(...removedCols);
 
-            if (addedCols.length > 0 || removedCols.length > 0) {
-              changes.push({ 
-                file, 
-                added: addedCols.map(c => c.name),
-                removed: removedCols.map(c => c.name)
-              });
-            }
-          } else {
-            // Original SQL comparison logic
-            const addedCols = headCols.filter(col => !baseCols.includes(col));
-            const removedCols = baseCols.filter(col => !headCols.includes(col));
-
-            added.push(...addedCols);
-            removed.push(...removedCols);
-
-            if (addedCols.length > 0 || removedCols.length > 0) {
-              changes.push({ file, added: addedCols, removed: removedCols });
-            }
+          if (addedCols.length > 0 || removedCols.length > 0) {
+            changes.push({ 
+              file, 
+              added: addedCols.map(c => c.name),
+              removed: removedCols.map(c => c.name)
+            });
           }
         } catch (error) {
           core.error(`Error processing ${file}: ${error.message}`);
@@ -796,20 +867,13 @@ const run = async () => {
       return { changes, added, removed };
     };
 
-    // Process SQL and YML column changes first
-    const { added: sqlAdded, removed: sqlRemoved } = await processColumnChanges(".sql", extractColumnsFromSQL);
-    const { added: ymlAdded, removed: ymlRemoved } = await processColumnChanges(".yml", (content, file) => extractColumnsFromYML(content, file), true);
+    // Process YML column changes only (Coalesce YML files)
+    const { added: ymlAdded, removed: ymlRemoved } = await processColumnChanges(".yml", (content, file) => extractColumnsFromYML(content, file));
     
     // Build the new simplified report
     summary = buildNewAnalysisReport(fileImpacts, columnImpacts, changedFiles);
     
-    // Add SQL and YML Column Changes sections (conditional)
-    if (configurableKeys.showSqlColumnChanges) {
-      summary += "### SQL Column Changes\n";
-      summary += `Added columns(${sqlAdded.length}): ${sqlAdded.join(', ')}\n`;
-      summary += `Removed columns(${sqlRemoved.length}): ${sqlRemoved.join(', ')}\n\n`;
-    }
-    
+    // Add YML Column Changes section (conditional)
     if (configurableKeys.showYmlColumnChanges) {
       summary += "### YML Column Changes\n";
       summary += `Added columns(${ymlAdded.length}): ${ymlAdded.map(c => c.name).join(', ')}\n`;
@@ -817,7 +881,7 @@ const run = async () => {
     }
 
     // Generate comprehensive JSON file with all data (regardless of configurable keys)
-    const generateComprehensiveJSON = (fileImpacts, columnImpacts, changedFiles, sqlAdded, sqlRemoved, ymlAdded, ymlRemoved) => {
+    const generateComprehensiveJSON = (fileImpacts, columnImpacts, changedFiles, ymlAdded, ymlRemoved) => {
       const jsonData = {
         metadata: {
           timestamp: new Date().toISOString(),
@@ -825,7 +889,7 @@ const run = async () => {
           pull_request_number: github.context.payload.pull_request?.number || null,
           configurable_keys_used: dqlabs_configurable_keys ? dqlabs_configurable_keys.split(',').map(k => k.trim()) : [],
           dqlabs_base_url: dqlabs_base_url,
-          analysis_type: "dbt_impact_analysis"
+          analysis_type: "coalesce_yml_impact_analysis"
         },
         changed_files: changedFiles,
         asset_impacts: {
@@ -836,10 +900,6 @@ const run = async () => {
           direct: [],
           indirect: []
         },
-        sql_column_changes: {
-          added: sqlAdded,
-          removed: sqlRemoved
-        },
         yml_column_changes: {
           added: ymlAdded.map(c => c.name),
           removed: ymlRemoved.map(c => c.name)
@@ -849,8 +909,6 @@ const run = async () => {
           total_indirect_assets: 0,
           total_direct_columns: 0,
           total_indirect_columns: 0,
-          total_sql_added: sqlAdded.length,
-          total_sql_removed: sqlRemoved.length,
           total_yml_added: ymlAdded.length,
           total_yml_removed: ymlRemoved.length,
           total_changed_files: changedFiles.length
@@ -917,7 +975,7 @@ const run = async () => {
     };
 
     // Generate comprehensive JSON data
-    const comprehensiveJsonData = generateComprehensiveJSON(fileImpacts, columnImpacts, changedFiles, sqlAdded, sqlRemoved, ymlAdded, ymlRemoved);
+    const comprehensiveJsonData = generateComprehensiveJSON(fileImpacts, columnImpacts, changedFiles, ymlAdded, ymlRemoved);
 
     // Post or update comment
     if (github.context.payload.pull_request) {
