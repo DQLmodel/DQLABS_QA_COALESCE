@@ -130,7 +130,7 @@ const getImpactAnalysisData = async (asset_id, connection_id, entity, isDirect =
       entity,
       moreOptions: {
         view_by: "table",
-        ...(!isDirect && { depth: 10 }) // Add depth only for indirect impact
+        ...(!isDirect && { depth: 3 }) // Add depth only for indirect impact
       },
       search_key: ""
     };
