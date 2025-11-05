@@ -557,7 +557,10 @@ const run = async () => {
         );
 
         core.info(`[MAIN] Found ${indirectColumnImpact.length} indirect column impacts for ${task.name}`);
-        columnImpacts[task.filePath].indirect.push(...indirectColumnImpact);
+        const filteredInDirectColumnImpact = indirectColumnImpact
+          .filter(column => column?.table_name !== task.name)
+          .filter(Boolean);
+        columnImpacts[task.filePath].indirect.push(...filteredInDirectColumnImpact);
       } else {
         core.info(`[MAIN] No changed columns found for task ${task.name}, skipping column-level analysis`);
       }
