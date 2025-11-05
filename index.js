@@ -489,8 +489,11 @@ const run = async () => {
         false // isDirect = false
       );
       core.info(`indirectly impacetd assets ${indirectImpact}`)
+       const filteredInDirectImpact = indirectImpact
+        .filter(table => table?.name !== task.name)
+        .filter(Boolean);
 
-      fileImpacts[task.filePath].indirect.push(...indirectImpact);
+      fileImpacts[task.filePath].indirect.push(...filteredInDirectImpact);
       core.info(`indirectly impacted${fileImpacts}`)
       core.info(`Directly impacted assets: ${JSON.stringify(directImpact.map(asset => ({
         name: asset.name,
