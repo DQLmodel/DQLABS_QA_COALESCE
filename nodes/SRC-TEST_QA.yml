@@ -94,25 +94,6 @@ operation:
           hasNull: false
           isDistinct: false
         columnReference:
-          columnCounter: ce6b43c7-0808-49e5-ac84-8b793d786e9e
-          stepCounter: f5f28f70-663c-44fd-b7a2-ca460056dacf
-        config: {}
-        dataType: TIMESTAMP
-        defaultValue: ""
-        description: ""
-        isSystemEndDate: true
-        name: SYSTEM_END_DATE
-        nullable: true
-        sourceColumnReferences:
-          - columnReferences: []
-            transform: ""
-      - acceptedValues:
-          strictMatch: true
-          values: []
-        appliedColumnTests:
-          hasNull: false
-          isDistinct: false
-        columnReference:
           columnCounter: 6851c66c-df48-4cd6-80a7-6d28f7afc52c
           stepCounter: f5f28f70-663c-44fd-b7a2-ca460056dacf
         config: {}
