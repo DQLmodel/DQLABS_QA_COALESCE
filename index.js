@@ -146,11 +146,10 @@ const getImpactAnalysisData = async (asset_id, connection_id, entity, isDirect =
         },
       }
     );
-
-    return safeArray(response?.data?.response?.data?.tables || []);
+    return response?.data?.response?.data || {};
   } catch (error) {
     core.error(`[getImpactAnalysisData] Error for ${entity}: ${error.message}`);
-    return [];
+    return {};
   }
 };
 
@@ -464,38 +463,33 @@ const run = async () => {
 
     // Process impact data for each file
     for (const task of matchedTasks) {
-      // Get direct impacts (without depth)
-      const directImpact = await getImpactAnalysisData(
+      // Get impact data (with depth for indirect)
+      const impactData = await getImpactAnalysisData(
         task.asset_id,
         task.connection_id,
         task.asset_id,
-        true // isDirect = true
+        false // isDirect = false to get both direct and indirect
       );
-      core.info(`directly impacted assets ${directImpact}`)
 
-      // Filter out the task itself from direct impacts
-      const filteredDirectImpact = directImpact
+      const impactTables = impactData?.tables || [];
+      const indirectImpact = impactData?.indirect || [];
+      const indirectNameSet = new Set(indirectImpact.map(item => item?.name));
+
+      // Filter out the task itself from direct impacts and remove items that are in indirect
+      const filteredDirectImpact = impactTables
+        .filter(table => !indirectNameSet.has(table?.name))
         .filter(table => table?.name !== task.name)
         .filter(Boolean);
 
       fileImpacts[task.filePath].direct.push(...filteredDirectImpact);
-      core.info(`directly impacted assets12 ${filteredDirectImpact}`)
 
-      // Get indirect impacts (with depth=10)
-      const indirectImpact = await getImpactAnalysisData(
-        task.asset_id,
-        task.connection_id,
-        task.asset_id,
-        false // isDirect = false
-      );
-      core.info(`indirectly impacetd assets ${indirectImpact}`)
-       const filteredInDirectImpact = indirectImpact
+      // Filter out the task itself from indirect impacts
+      const filteredInDirectImpact = indirectImpact
         .filter(table => table?.name !== task.name)
         .filter(Boolean);
 
       fileImpacts[task.filePath].indirect.push(...filteredInDirectImpact);
-      core.info(`indirectly impacted${fileImpacts}`)
-      core.info(`Directly impacted assets: ${JSON.stringify(directImpact.map(asset => ({
+      core.info(`Directly impacted assets: ${JSON.stringify(filteredDirectImpact.map(asset => ({
         name: asset.name,
         connection_id: asset.connection_id,
         asset_name: asset.asset_name,
@@ -503,7 +497,7 @@ const run = async () => {
       })), null, 2)}`);
 
       // For indirect impacts  
-      core.info(`Indirectly impacted assets: ${JSON.stringify(indirectImpact.map(asset => ({
+      core.info(`Indirectly impacted assets: ${JSON.stringify(filteredInDirectImpact.map(asset => ({
         name: asset.name,
         connection_id: asset.connection_id,
         asset_name: asset.asset_name,
