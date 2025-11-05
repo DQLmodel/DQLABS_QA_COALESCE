@@ -471,6 +471,7 @@ const run = async () => {
         task.asset_id,
         true // isDirect = true
       );
+      core.info(`directly impacted assets ${directImpact}`)
 
       // Filter out the task itself from direct impacts
       const filteredDirectImpact = directImpact
@@ -478,6 +479,7 @@ const run = async () => {
         .filter(Boolean);
 
       fileImpacts[task.filePath].direct.push(...filteredDirectImpact);
+      core.info(`directly impacted assets12 ${filteredDirectImpact}`)
 
       // Get indirect impacts (with depth=10)
       const indirectImpact = await getImpactAnalysisData(
@@ -486,8 +488,10 @@ const run = async () => {
         task.asset_id,
         false // isDirect = false
       );
+      core.info(`indirectly impacetd assets ${indirectImpact}`)
 
       fileImpacts[task.filePath].indirect.push(...indirectImpact);
+      core.info(`indirectly impacted${fileImpacts}`)
 
       // Get column-level impacts for this task
       const taskChangedColumns = [
