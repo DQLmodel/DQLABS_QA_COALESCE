@@ -492,7 +492,34 @@ const run = async () => {
 
       fileImpacts[task.filePath].indirect.push(...indirectImpact);
       core.info(`indirectly impacted${fileImpacts}`)
+      core.info(`Directly impacted assets: ${JSON.stringify(directImpact.map(asset => ({
+        name: asset.name,
+        connection_id: asset.connection_id,
+        asset_name: asset.asset_name,
+        asset_group: asset.asset_group
+      })), null, 2)}`);
 
+      // For indirect impacts  
+      core.info(`Indirectly impacted assets: ${JSON.stringify(indirectImpact.map(asset => ({
+        name: asset.name,
+        connection_id: asset.connection_id,
+        asset_name: asset.asset_name,
+        asset_group: asset.asset_group
+      })), null, 2)}`);
+
+      // For file impacts structure
+      Object.entries(fileImpacts).forEach(([filePath, impacts]) => {
+        core.info(`File: ${filePath}`);
+        core.info(`- Direct impacts: ${impacts.direct.length} assets`);
+        core.info(`- Indirect impacts: ${impacts.indirect.length} assets`);
+        
+        if (impacts.direct.length > 0) {
+          core.info(`  Direct assets: ${JSON.stringify(impacts.direct.map(a => a.name))}`);
+        }
+        if (impacts.indirect.length > 0) {
+          core.info(`  Indirect assets: ${JSON.stringify(impacts.indirect.map(a => a.name))}`);
+        }
+      });
       // Get column-level impacts for this task
       const taskChangedColumns = [
         ...changedColumns.added.filter(col => col.file === task.filePath).map(col => col.column),
