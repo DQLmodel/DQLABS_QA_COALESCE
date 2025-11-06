@@ -74,7 +74,7 @@ operation:
           columnCounter: b2af3856-b750-4bbc-80cc-e37f2cc220bd
           stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
         config: {}
-        dataType: VARCHAR(16777216)
+        dataType: VARCHAR(16777)
         defaultValue: ""
         description: ""
         keyColumnType: None
