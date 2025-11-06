@@ -56,6 +56,25 @@ operation:
           hasNull: false
           isDistinct: false
         columnReference:
+          columnCounter: fc9974b2-09ae-4cf3-ad2f-76a1fce16591
+          stepCounter: f5f28f70-663c-44fd-b7a2-ca460056dacf
+        config: {}
+        dataType: VARCHAR
+        defaultValue: ""
+        description: ""
+        isSystemCurrentFlag: true
+        name: SYSTEM_CURRENT_FLAG
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests:
+          hasNull: false
+          isDistinct: false
+        columnReference:
           columnCounter: ef5c2284-ec67-4206-8201-042b4b74049a
           stepCounter: f5f28f70-663c-44fd-b7a2-ca460056dacf
         config: {}
