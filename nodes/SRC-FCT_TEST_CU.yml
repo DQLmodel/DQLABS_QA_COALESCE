@@ -81,7 +81,7 @@ operation:
           columnCounter: 3a1b934d-a028-44f4-bcd3-d1f3ca0fad98
           stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
         config: {}
-        dataType: VARCHAR(1677721)
+        dataType: VARCHAR(16777216)
         description: ""
         name: EMAIL_ADDRESS
         nullable: true
