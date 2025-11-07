@@ -35,7 +35,7 @@ operation:
           columnCounter: 54e6104e-50d1-49e0-bc43-d91b0831e49b
           stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
         config: {}
-        dataType: VARCHAR(51)
+        dataType: VARCHAR(50)
         defaultValue: ""
         description: ""
         name: FIRST_NAME
