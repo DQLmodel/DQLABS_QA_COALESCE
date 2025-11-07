@@ -51,7 +51,7 @@ operation:
           columnCounter: 5d2326ad-aeef-41f5-aeac-30c0bb701b85
           stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
         config: {}
-        dataType: VARCHAR(16777216)
+        dataType: VARCHAR(1677721)
         description: ""
         name: LAST_NAME
         nullable: true
