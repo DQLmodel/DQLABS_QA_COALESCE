@@ -471,7 +471,7 @@ const run = async () => {
         false // isDirect = false to get both direct and indirect
       );
 
-      const impactTables = impactData?.tables || [];
+      const impactTables = impactData?.direct || [];
       const indirectImpact = impactData?.indirect || [];
       const indirectNameSet = new Set(indirectImpact.map(item => item?.name));
 
@@ -969,7 +969,7 @@ const run = async () => {
         });
       });
 
-      // Process column impacts
+      // Process column impactsa
       Object.entries(columnImpacts).forEach(([filePath, impacts]) => {
         impacts.direct.forEach(column => {
           const redirectUrl = constructColumnUrl(column, dqlabs_createlink_url);
