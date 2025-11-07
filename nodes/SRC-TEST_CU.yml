@@ -97,7 +97,7 @@ operation:
           columnCounter: cb17024d-05e7-4d1b-9705-e9ea12a554a3
           stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
         config: {}
-        dataType: VARCHAR(1677721)
+        dataType: VARCHAR(16777216)
         defaultValue: ""
         description: ""
         keyColumnType: None
