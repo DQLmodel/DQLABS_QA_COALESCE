@@ -13,25 +13,6 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: d1034761-0935-465d-bc21-552ee888ca82
-          stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
-        config: {}
-        dataType: NUMBER(38,0)
-        defaultValue: ""
-        description: ""
-        name: CUSTOMER_ID
-        nullable: true
-        primaryKey: false
-        sourceColumnReferences:
-          - columnReferences: []
-            transform: ""
-        transform: ""
-        uniqueKey: false
-      - acceptedValues:
-          strictMatch: true
-          values: []
-        appliedColumnTests: {}
-        columnReference:
           columnCounter: 54e6104e-50d1-49e0-bc43-d91b0831e49b
           stepCounter: 84d34cc8-1de3-4f02-9059-feacc5635315
         config: {}
