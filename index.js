@@ -192,8 +192,16 @@ const getColumnLevelImpactAnalysis = async (asset_id, connection_id, entity, cha
     core.info(`[getColumnLevelImpactAnalysis] Response data structure: ${JSON.stringify(Object.keys(response.data || {}))}`);
 
     // Extract column-level information from the response
-    const tables = safeArray(response?.data?.response?.data?.tables || []);
-    core.info(`[getColumnLevelImpactAnalysis] Found ${tables.length} tables in response`);
+    // Use direct/indirect arrays based on isDirect parameter (same as asset-level analysis)
+    const responseData = response?.data?.response?.data || {};
+    const directTables = safeArray(responseData.direct || []);
+    const indirectTables = safeArray(responseData.indirect || []);
+    
+    // Use the appropriate array based on isDirect parameter
+    const tables = isDirect ? directTables : indirectTables;
+    
+    core.info(`[getColumnLevelImpactAnalysis] isDirect=${isDirect}, Found ${directTables.length} direct tables, ${indirectTables.length} indirect tables`);
+    core.info(`[getColumnLevelImpactAnalysis] Using ${tables.length} tables for analysis`);
     
     const columnImpacts = [];
 
