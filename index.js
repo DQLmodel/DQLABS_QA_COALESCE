@@ -632,9 +632,12 @@ const run = async () => {
 
     const constructItemUrl = (item, baseUrl) => {
       if (!item || !baseUrl) return "#";
+      core.info(item)
+      core.info(baseUrl)
 
       try {
         const url = new URL(baseUrl);
+        core.info(url)
 
         // Check if we have connection_id for valid link
         if (!item.connection_id || !item.redirect_id) {
@@ -660,6 +663,8 @@ const run = async () => {
         // Handle data items
         if (item.asset_group === "data") {
           url.pathname = `/observe/data/${item.redirect_id}/measures`;
+          core.info(`checking the url`)
+          core.info(url)
           return url.toString();
         }
 
