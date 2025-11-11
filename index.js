@@ -634,6 +634,8 @@ const run = async () => {
       if (!item || !baseUrl) return "#";
       core.info(item)
       core.info(baseUrl)
+      core.info(`[CONFIG DEBUG] dqlabs_createlink_url: "${dqlabs_createlink_url}"`);
+      core.info(`[CONFIG DEBUG] dqlabs_base_url: "${dqlabs_base_url}"`);
 
       try {
         const url = new URL(baseUrl);
