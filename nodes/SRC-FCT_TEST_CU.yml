@@ -36,7 +36,7 @@ operation:
           columnCounter: e5173745-68f8-444f-8d0b-fa70a3c7652a
           stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
         config: {}
-        dataType: VARCHAR(1677721)
+        dataType: VARCHAR(16777216)
         description: ""
         name: FIRST_NAME
         nullable: true
