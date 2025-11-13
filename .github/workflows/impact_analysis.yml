@@ -1,10 +1,9 @@
 
-name: "DBT Impact Analysis on PR"
+name: "Coalesce Impact Analysis on PR"
 
 on:
   pull_request:
     paths:
-      - '**/*.sql'
       - '**/*.yml'
 
 permissions:
@@ -20,12 +19,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Get changed DBT files
+      - name: Get changed Coalesce files
         id: changes
         uses: tj-actions/changed-files@v46
         with:
           files: |
-            **/*.sql
             **/*.yml
           include_removed: true
           include_renamed: true
