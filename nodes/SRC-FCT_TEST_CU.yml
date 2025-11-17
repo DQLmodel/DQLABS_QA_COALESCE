@@ -13,15 +13,9 @@ operation:
   locationName: SRC
   materializationType: table
   metadata:
-    appliedNodeTests:
-      - continueOnFailure: true
-        description: ""
-        name: Test
-        runOrder: After
-        templateString: ""
+    appliedNodeTests: []
     columns:
-      - appliedColumnTests:
-          isDistinct: false
+      - appliedColumnTests: {}
         columnReference:
           columnCounter: 93efd724-fddf-47c4-9931-48f166a4d665
           stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
@@ -35,8 +29,7 @@ operation:
               - columnCounter: d5dc51fe-55f0-45ee-87ca-a138971b4551
                 stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
             transform: ""
-      - appliedColumnTests:
-          isDistinct: true
+      - appliedColumnTests: {}
         columnReference:
           columnCounter: e5173745-68f8-444f-8d0b-fa70a3c7652a
           stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
@@ -50,8 +43,7 @@ operation:
               - columnCounter: 8cd82029-86d2-41db-a5b7-0ed56ebbce39
                 stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
             transform: ""
-      - appliedColumnTests:
-          isDistinct: true
+      - appliedColumnTests: {}
         columnReference:
           columnCounter: 5d2326ad-aeef-41f5-aeac-30c0bb701b85
           stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
@@ -65,8 +57,7 @@ operation:
               - columnCounter: b2af3856-b750-4bbc-80cc-e37f2cc220bd
                 stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
             transform: ""
-      - appliedColumnTests:
-          isDistinct: true
+      - appliedColumnTests: {}
         columnReference:
           columnCounter: bfbb5426-bea5-48f4-9283-f6743cc49339
           stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
@@ -80,8 +71,7 @@ operation:
               - columnCounter: cb17024d-05e7-4d1b-9705-e9ea12a554a3
                 stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
             transform: ""
-      - appliedColumnTests:
-          isDistinct: true
+      - appliedColumnTests: {}
         columnReference:
           columnCounter: 3a1b934d-a028-44f4-bcd3-d1f3ca0fad98
           stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
@@ -98,8 +88,7 @@ operation:
       - acceptedValues:
           strictMatch: true
           values: []
-        appliedColumnTests:
-          isDistinct: true
+        appliedColumnTests: {}
         columnReference:
           columnCounter: d0c2690e-e391-4033-b05e-239c5fdd7e26
           stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
@@ -116,8 +105,7 @@ operation:
       - acceptedValues:
           strictMatch: true
           values: []
-        appliedColumnTests:
-          isDistinct: true
+        appliedColumnTests: {}
         columnReference:
           columnCounter: 85310586-9dcd-4d9a-bae7-24e72c7d99a5
           stepCounter: 47f27197-1f83-4c38-bc51-2f9d45a265cf
@@ -132,8 +120,7 @@ operation:
           - columnReferences: []
             transform: CAST(CURRENT_TIMESTAMP AS TIMESTAMP)
     cteString: ""
-    enabledColumnTestIDs:
-      - isDistinct
+    enabledColumnTestIDs: []
     sourceMapping:
       - aliases: {}
         customSQL:
