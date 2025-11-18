@@ -1,6 +1,6 @@
 excludeSelector: ""
 fileVersion: 1
 id: "13"
-includeSelector: "{subgraph:s2}"
+includeSelector: "{subgraph:s2} OR { location: SRC name: CU$TOMER_DATA } OR { location: SRC name: CUSTOMERAI } OR { location: SRC name: QUERY_PVN_SF }"
 name: snow_job2
 type: Job

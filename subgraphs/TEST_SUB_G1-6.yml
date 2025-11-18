@@ -4,7 +4,5 @@ name: TEST_SUB_G1
 steps:
   - 32693822-dffc-4da8-bff8-3069675997b9
   - 47f27197-1f83-4c38-bc51-2f9d45a265cf
-  - 84d34cc8-1de3-4f02-9059-feacc5635315
-  - a7da01a6-9fc6-4bd3-b941-725f1eeef95c
   - f5f28f70-663c-44fd-b7a2-ca460056dacf
 type: Subgraph
