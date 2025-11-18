@@ -1,0 +1,6 @@
+excludeSelector: ""
+fileVersion: 1
+id: "13"
+includeSelector: "{subgraph:s2}"
+name: snow_job2
+type: Job
