@@ -20,9 +20,7 @@ operation:
       - acceptedValues:
           strictMatch: true
           values: []
-        appliedColumnTests:
-          hasNull: false
-          isDistinct: false
+        appliedColumnTests: {}
         columnReference:
           columnCounter: d5dc51fe-55f0-45ee-87ca-a138971b4551
           stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
@@ -44,9 +42,7 @@ operation:
       - acceptedValues:
           strictMatch: true
           values: []
-        appliedColumnTests:
-          hasNull: false
-          isDistinct: true
+        appliedColumnTests: {}
         columnReference:
           columnCounter: 8cd82029-86d2-41db-a5b7-0ed56ebbce39
           stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
@@ -67,9 +63,7 @@ operation:
       - acceptedValues:
           strictMatch: true
           values: []
-        appliedColumnTests:
-          hasNull: false
-          isDistinct: true
+        appliedColumnTests: {}
         columnReference:
           columnCounter: b2af3856-b750-4bbc-80cc-e37f2cc220bd
           stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
@@ -90,9 +84,7 @@ operation:
       - acceptedValues:
           strictMatch: true
           values: []
-        appliedColumnTests:
-          hasNull: false
-          isDistinct: true
+        appliedColumnTests: {}
         columnReference:
           columnCounter: cb17024d-05e7-4d1b-9705-e9ea12a554a3
           stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
@@ -112,9 +104,7 @@ operation:
       - acceptedValues:
           strictMatch: true
           values: []
-        appliedColumnTests:
-          hasNull: false
-          isDistinct: true
+        appliedColumnTests: {}
         columnReference:
           columnCounter: 2af75a95-1a79-446d-b2cb-deb4053bdf8f
           stepCounter: 32693822-dffc-4da8-bff8-3069675997b9
@@ -132,9 +122,7 @@ operation:
             transform: ""
         systemColumnType: None
     cteString: ""
-    enabledColumnTestIDs:
-      - isDistinct
-      - hasNull
+    enabledColumnTestIDs: []
     sourceMapping:
       - aliases:
           CUSTOMER_SF_TERM: 84d34cc8-1de3-4f02-9059-feacc5635315
