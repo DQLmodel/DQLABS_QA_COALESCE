@@ -36,7 +36,8 @@ const parseConfigurableKeys = (keysString) => {
       showIndirectColumnList: true,
       showDirectAssetList: true,
       showIndirectAssetList: true,
-      showYmlColumnChanges: true
+      showYmlColumnsAdded: true,
+      showYmlColumnsRemoved: true
     };
   }
 
@@ -51,7 +52,8 @@ const parseConfigurableKeys = (keysString) => {
     showIndirectColumnList: keys.includes('indirect_column_list'),
     showDirectAssetList: keys.includes('direct_asset_list'),
     showIndirectAssetList: keys.includes('indirect_asset_list'),
-    showYmlColumnChanges: keys.includes('yml_column_changes')
+    showYmlColumnsAdded: keys.includes('yml_columns_added'),
+    showYmlColumnsRemoved: keys.includes('yml_columns_removed')
   };
 };
 
@@ -921,10 +923,16 @@ const run = async () => {
     summary = buildNewAnalysisReport(fileImpacts, columnImpacts, changedFiles);
     
     // Add YML Column Changes section (conditional)
-    if (configurableKeys.showYmlColumnChanges) {
+    const showYmlSection = configurableKeys.showYmlColumnsAdded || configurableKeys.showYmlColumnsRemoved;
+    if (showYmlSection) {
       summary += "### YML Column Changes\n";
-      summary += `Added columns(${ymlAdded.length}): ${ymlAdded.map(c => c.name).join(', ')}\n`;
-      summary += `Removed columns(${ymlRemoved.length}): ${ymlRemoved.map(c => c.name).join(', ')}\n\n`;
+      if (configurableKeys.showYmlColumnsAdded) {
+        summary += `Added columns(${ymlAdded.length}): ${ymlAdded.map(c => c.name).join(', ')}\n`;
+      }
+      if (configurableKeys.showYmlColumnsRemoved) {
+        summary += `Removed columns(${ymlRemoved.length}): ${ymlRemoved.map(c => c.name).join(', ')}\n`;
+      }
+      summary += "\n";
     }
 
     // Generate comprehensive JSON file with all data (regardless of configurable keys)
@@ -1018,11 +1026,70 @@ const run = async () => {
       jsonData.summary.total_direct_columns = jsonData.column_impacts.direct.length;
       jsonData.summary.total_indirect_columns = jsonData.column_impacts.indirect.length;
 
-      return JSON.stringify(jsonData, null, 2);
+      return {
+        jsonString: JSON.stringify(jsonData, null, 2),
+        jsonObject: jsonData
+      };
     };
 
     // Generate comprehensive JSON data
-    const comprehensiveJsonData = generateComprehensiveJSON(fileImpacts, columnImpacts, changedFiles, ymlAdded, ymlRemoved);
+    const { jsonString: comprehensiveJsonData, jsonObject: comprehensiveJsonObject } = generateComprehensiveJSON(fileImpacts, columnImpacts, changedFiles, ymlAdded, ymlRemoved);
+
+    // Send metadata to DQLabs API endpoint
+    const sendMetadataToDQLabs = async (comprehensiveJsonObject) => {
+      try {
+        if (!dqlabs_base_url) {
+          core.warning('[sendMetadataToDQLabs] DQLabs base URL not provided, skipping metadata upload');
+          return;
+        }
+
+        const metadataUrl = `http://44.233.244.28:8000/api/lineage/github_action_metadata/`;
+        core.info(`[sendMetadataToDQLabs] Sending metadata to dqlabs: ${metadataUrl}`);
+        
+        const payload = {
+          markdown_report: comprehensiveJsonObject,
+          metadata: {
+            timestamp: new Date().toISOString(),
+            commit_sha: github.context.sha,
+            pull_request_number: github.context.payload.pull_request?.number || null,
+            pull_request_url: github.context.payload.pull_request?.html_url || null,
+            repository: github.context.repo.repo,
+            owner: github.context.repo.owner,
+            branch: github.context.payload.pull_request?.head?.ref || null,
+            base_branch: github.context.payload.pull_request?.base?.ref || null,
+            workflow_run_id: github.context.runId || null,
+            workflow_run_url: github.context.payload.repository?.html_url ? 
+              `${github.context.payload.repository.html_url}/actions/runs/${github.context.runId}` : null
+          },
+          changed_files: changedFiles,
+          configurable_keys: dqlabs_configurable_keys ? dqlabs_configurable_keys.split(',').map(k => k.trim()) : []
+        };
+
+        core.info(`[sendMetadataToDQLabs] Sending metadata to: ${metadataUrl}`);
+        
+        const response = await axios.post(metadataUrl, payload, {
+          headers: {
+            "Content-Type": "application/json"
+          },
+        });
+
+        core.info(`[sendMetadataToDQLabs] Successfully sent metadata. Status: ${response.status}`);
+        if (response.data) {
+          core.info(`[sendMetadataToDQLabs] Response: ${JSON.stringify(response.data)}`);
+        }
+      } catch (error) {
+        core.error(`[sendMetadataToDQLabs] Error sending metadata: ${error.message}`);
+        if (error.response) {
+          core.error(`[sendMetadataToDQLabs] Response status: ${error.response.status}`);
+          core.error(`[sendMetadataToDQLabs] Response data: ${JSON.stringify(error.response.data)}`);
+        }
+        // Don't fail the entire workflow if metadata upload fails
+        core.warning('[sendMetadataToDQLabs] Continuing despite metadata upload failure');
+      }
+    };
+
+    // Send metadata to DQLabs endpoint (JSON report object)
+    await sendMetadataToDQLabs(comprehensiveJsonObject);
 
     // Post or update comment
     if (github.context.payload.pull_request) {
