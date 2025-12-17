@@ -1069,7 +1069,9 @@ const run = async () => {
         
         const response = await axios.post(metadataUrl, payload, {
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "client-id": "UOR8tBh/ZFxw5S1g3+Lible45TF7sZZm9iuSiPx6W9OAAO7ZY0j9+LIYrEu0usoj",
+            "client-secret": "iT5DK+iP9RxMpg3yWQneussY/QOhFT9iEY73Lz6lJU0HQyAa7RONFpekkNIXFoQnTYho+TLKqbODVSybKgXzhdQ4Kphsl9b/N76TPsBO91A=",
           },
         });
 
