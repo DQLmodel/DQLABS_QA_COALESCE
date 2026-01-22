@@ -1,6 +1,6 @@
 excludeSelector: ""
 fileVersion: 1
 id: "9"
-includeSelector: "{subgraph:TEST_SUB_G1 } OR { location: SRC name: CUSTOMER_SF_TERM } OR { location: SRC name: CU$TOMER_DATA }"
+includeSelector: "{subgraph:TEST_SUB_G1 } OR { location: SRC name: CUSTOMER_SF_TERM } OR { location: SRC name: CU$TOMER_DATA } OR { location: SRC name: CUSTOMER_AI_MIN_MAX } OR { location: SRC name: DIM_CU$TOMER_DATA1 } OR { location: SRC name: DIM_CUSTOMER_AI_MIN_MAX }"
 name: SNOW_JOB1
 type: Job
