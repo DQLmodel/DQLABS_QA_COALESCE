@@ -134,7 +134,8 @@ const getImpactAnalysisData = async (asset_id, connection_id, entity, isDirect =
         view_by: "table",
         ...(!isDirect && { depth: 10 }) // Add depth only for indirect impact
       },
-      search_key: ""
+      search_key: "",
+      is_github: true
     };
 
     const response = await axios.post(
@@ -148,7 +149,6 @@ const getImpactAnalysisData = async (asset_id, connection_id, entity, isDirect =
         },
       }
     );
-
     return safeArray(response?.data?.response?.data?.tables || []);
   } catch (error) {
     core.error(`[getImpactAnalysisData] Error for ${entity}: ${error.message}`);
@@ -255,7 +255,7 @@ const getColumnLevelImpactAnalysis = async (asset_id, connection_id, entity, cha
   }
 };
 
-// Enhanced function to extract changed columns from file changes
+// Enhanced function to extract changed columns from YML file changes
 const extractChangedColumns = async (changedFiles) => {
   const changedColumns = {
     added: [],
@@ -265,7 +265,7 @@ const extractChangedColumns = async (changedFiles) => {
 
   core.info(`[extractChangedColumns] Processing ${changedFiles.length} changed files`);
 
-  for (const file of changedFiles.filter(f => f && f.endsWith(".sql"))) {
+  for (const file of changedFiles.filter(f => f && f.endsWith(".yml"))) {
     try {
       core.info(`[extractChangedColumns] Processing file: ${file}`);
       
@@ -285,22 +285,26 @@ const extractChangedColumns = async (changedFiles) => {
       core.info(`[extractChangedColumns] Base content length: ${baseContent ? baseContent.length : 0}`);
       core.info(`[extractChangedColumns] Head content length: ${headContent.length}`);
 
-      const baseCols = safeArray(baseContent ? extractColumnsFromSQL(baseContent) : []);
-      const headCols = safeArray(extractColumnsFromSQL(headContent));
+      const baseCols = safeArray(baseContent ? extractColumnsFromYML(baseContent, file) : []);
+      const headCols = safeArray(extractColumnsFromYML(headContent, file));
 
-      core.info(`[extractChangedColumns] Base columns for ${file}: [${baseCols.join(', ')}]`);
-      core.info(`[extractChangedColumns] Head columns for ${file}: [${headCols.join(', ')}]`);
+      // Extract just the names for comparison
+      const baseColNames = baseCols.map(col => col.name);
+      const headColNames = headCols.map(col => col.name);
+
+      core.info(`[extractChangedColumns] Base columns for ${file}: [${baseColNames.join(', ')}]`);
+      core.info(`[extractChangedColumns] Head columns for ${file}: [${headColNames.join(', ')}]`);
 
       // Find added columns
-      const addedCols = headCols.filter(col => !baseCols.includes(col));
+      const addedCols = headCols.filter(col => !baseColNames.includes(col.name));
       // Find removed columns
-      const removedCols = baseCols.filter(col => !headCols.includes(col));
+      const removedCols = baseCols.filter(col => !headColNames.includes(col.name));
 
-      core.info(`[extractChangedColumns] Added columns for ${file}: [${addedCols.join(', ')}]`);
-      core.info(`[extractChangedColumns] Removed columns for ${file}: [${removedCols.join(', ')}]`);
+      core.info(`[extractChangedColumns] Added columns for ${file}: [${addedCols.map(c => c.name).join(', ')}]`);
+      core.info(`[extractChangedColumns] Removed columns for ${file}: [${removedCols.map(c => c.name).join(', ')}]`);
 
-      changedColumns.added.push(...addedCols.map(col => ({ column: col, file })));
-      changedColumns.removed.push(...removedCols.map(col => ({ column: col, file })));
+      changedColumns.added.push(...addedCols.map(col => ({ column: col.name, file })));
+      changedColumns.removed.push(...removedCols.map(col => ({ column: col.name, file })));
     } catch (error) {
       core.error(`[extractChangedColumns] Error extracting columns from ${file}: ${error.message}`);
       core.error(`[extractChangedColumns] Stack trace: ${error.stack}`);
@@ -319,6 +323,14 @@ const run = async () => {
     // Get changed files safely
     const changedFiles = safeArray(await getChangedFiles());
     core.info(`Found ${changedFiles.length} changed files`);
+    
+    // Log YML files for debugging
+    const ymlFiles = changedFiles.filter(f => f && f.endsWith(".yml"));
+    if (ymlFiles.length > 0) {
+      core.info(`Found ${ymlFiles.length} YML files: [${ymlFiles.join(', ')}]`);
+    } else {
+      core.warning(`No YML files found in changed files. All files: [${changedFiles.join(', ')}]`);
+    }
 
     // Extract changed columns for column-level analysis
     const changedColumns = await extractChangedColumns(changedFiles);
@@ -332,28 +344,102 @@ const run = async () => {
       core.info(`[MAIN] Removed columns: ${JSON.stringify(changedColumns.removed)}`);
     }
 
-    // Process changed SQL models
-    const changedModels = changedFiles
-      .filter(file => file && typeof file === "string" && file.endsWith(".sql"))
-      .map(file => path.basename(file, path.extname(file)))
+    // Process changed YML files (Coalesce nodes)
+    const changedYmlFiles = changedFiles
+      .filter(file => file && typeof file === "string" && file.endsWith(".yml"))
       .filter(Boolean);
+
+    // Extract model names from YML files
+    const changedModels = [];
+    const modelNameToFileMap = {};
+    
+    core.info(`[MAIN] Processing ${changedYmlFiles.length} changed YML files`);
+    
+    for (const file of changedYmlFiles) {
+      try {
+        const headSha = process.env.GITHUB_HEAD_SHA || github.context.payload.pull_request?.head?.sha;
+        if (!headSha) {
+          core.warning(`[MAIN] No head SHA found, trying to read file directly: ${file}`);
+        }
+        
+        const headContent = await getFileContent(headSha, file);
+        if (!headContent) {
+          core.warning(`[MAIN] Could not read content for ${file}, trying to read from filesystem`);
+          // Fallback: try reading from filesystem
+          try {
+            const fsContent = fs.readFileSync(file, 'utf8');
+            if (fsContent) {
+              const modelName = extractModelNameFromYML(fsContent, file);
+              if (modelName) {
+                changedModels.push(modelName);
+                modelNameToFileMap[modelName] = file;
+                core.info(`[MAIN] Extracted model name '${modelName}' from ${file} (via filesystem)`);
+              }
+            }
+          } catch (fsError) {
+            core.error(`[MAIN] Could not read ${file} from filesystem: ${fsError.message}`);
+          }
+          continue;
+        }
+        
+        const modelName = extractModelNameFromYML(headContent, file);
+        if (modelName) {
+          changedModels.push(modelName);
+          modelNameToFileMap[modelName] = file;
+          core.info(`[MAIN] Extracted model name '${modelName}' from ${file}`);
+        } else {
+          core.warning(`[MAIN] Could not extract model name from ${file}`);
+        }
+      } catch (error) {
+        core.error(`[MAIN] Error extracting model name from ${file}: ${error.message}`);
+        core.error(`[MAIN] Stack trace: ${error.stack}`);
+      }
+    }
+
+    core.info(`[MAIN] Found ${changedModels.length} changed models from YML files: [${changedModels.join(', ')}]`);
 
     // Get tasks safely
     const tasks = await getTasks();
     core.info(`[MAIN] Retrieved ${tasks.length} tasks from DQLabs`);
 
-    // Match tasks with changed models
-    const matchedTasks = tasks
-      .filter(task => task?.connection_type === "dbt")
-      .filter(task => changedModels.includes(task?.name))
-      .map(task => ({
-        ...task,
-        entity: task?.task_id || "",
-        filePath: changedFiles.find(f => path.basename(f, path.extname(f)) === task.name)
-      }))
+    // Match tasks with changed models (filter for Coalesce connection type)
+    // Use case-insensitive matching for connection_type
+    const coalesceTasks = tasks.filter(task => {
+      const connType = (task?.connection_type || "").toLowerCase();
+      return connType === "coalesce_pipeline" || connType.includes("coalesce_pipeline");
+    });
+    
+    core.info(`[MAIN] Found ${coalesceTasks.length} Coalesce tasks out of ${tasks.length} total tasks`);
+    
+    // Log all Coalesce task names for debugging
+    if (coalesceTasks.length > 0) {
+      core.info(`[MAIN] Coalesce task names: [${coalesceTasks.map(t => t.name).join(', ')}]`);
+    }
+    
+    // Use case-insensitive matching for model names
+    const matchedTasks = coalesceTasks
+      .filter(task => {
+        const taskName = (task?.name || "").toLowerCase();
+        return changedModels.some(model => model.toLowerCase() === taskName);
+      })
+      .map(task => {
+        // Find matching model (case-insensitive)
+        const matchingModel = changedModels.find(model => 
+          model.toLowerCase() === (task?.name || "").toLowerCase()
+        );
+        return {
+          ...task,
+          entity: task?.task_id || "",
+          filePath: matchingModel ? modelNameToFileMap[matchingModel] : null
+        };
+      })
       .filter(task => task.filePath); // Ensure we have the file path
 
     core.info(`[MAIN] Found ${matchedTasks.length} matched tasks for changed models`);
+    if (matchedTasks.length === 0 && changedModels.length > 0) {
+      core.warning(`[MAIN] No tasks matched! Changed models: [${changedModels.join(', ')}]`);
+      core.warning(`[MAIN] Available Coalesce tasks: [${coalesceTasks.map(t => t.name).join(', ')}]`);
+    }
     matchedTasks.forEach(task => {
       core.info(`[MAIN] Matched task: ${task.name} (${task.entity}) -> ${task.filePath}`);
     });
@@ -383,7 +469,7 @@ const run = async () => {
       const directImpact = await getImpactAnalysisData(
         task.asset_id,
         task.connection_id,
-        task.entity,
+        task.task_id,
         true // isDirect = true
       );
 
@@ -398,12 +484,11 @@ const run = async () => {
       const indirectImpact = await getImpactAnalysisData(
         task.asset_id,
         task.connection_id,
-        task.entity,
+        task.task_id,
         false // isDirect = false
       );
 
       fileImpacts[task.filePath].indirect.push(...indirectImpact);
-
       // Get column-level impacts for this task
       const taskChangedColumns = [
         ...changedColumns.added.filter(col => col.file === task.filePath).map(col => col.column),
@@ -420,7 +505,7 @@ const run = async () => {
         const directColumnImpact = await getColumnLevelImpactAnalysis(
           task.asset_id,
           task.connection_id,
-          task.entity,
+          task.task_id,
           taskChangedColumns,
           true // isDirect = true
         );
@@ -438,7 +523,7 @@ const run = async () => {
         const indirectColumnImpact = await getColumnLevelImpactAnalysis(
           task.asset_id,
           task.connection_id,
-          task.entity,
+          task.task_id,
           taskChangedColumns,
           false // isDirect = false
         );
@@ -507,9 +592,14 @@ const run = async () => {
 
     const constructItemUrl = (item, baseUrl) => {
       if (!item || !baseUrl) return "#";
+      core.info(item)
+      core.info(baseUrl)
+      core.info(`[CONFIG DEBUG] dqlabs_createlink_url: "${dqlabs_createlink_url}"`);
+      core.info(`[CONFIG DEBUG] dqlabs_base_url: "${dqlabs_base_url}"`);
 
       try {
         const url = new URL(baseUrl);
+        core.info(url)
 
         // Check if we have connection_id for valid link
         if (!item.connection_id || !item.redirect_id) {
@@ -526,9 +616,17 @@ const run = async () => {
           return url.toString();
         }
 
+        // Handle report items
+        if (item.asset_group === "report") {
+          url.pathname = `/observe/report/worksheet/${item.redirect_id}/overview`;
+          return url.toString();
+        }
+
         // Handle data items
         if (item.asset_group === "data") {
           url.pathname = `/observe/data/${item.redirect_id}/measures`;
+          core.info(`checking the url`)
+          core.info(url)
           return url.toString();
         }
 
@@ -582,174 +680,157 @@ const run = async () => {
       }
     };
 
-    // Build the complete impacts section with single collapse
-    const buildImpactsSection = (fileImpacts) => {
-      let content = '';
-      let totalDirect = 0;
-      let totalIndirect = 0;
+    // Build the new simplified report structure
+    const buildNewAnalysisReport = (fileImpacts, columnImpacts, changedFiles) => {
+      let report = "## Impact Analysis Report\n\n";
       
-      // Generate content for each file
-      Object.entries(fileImpacts).forEach(([filePath, impacts]) => {
-        const { direct, indirect, taskName } = impacts;
-        totalDirect += direct.length;
-        totalIndirect += indirect.length;
-
-        content += `### File: ${filePath}\n`;
-        content += `**Model:** ${taskName}\n\n`;
+      // 1. Changed Files section (always show)
+      report += "### Changed Files\n";
+      if (changedFiles.length > 0) {
+        changedFiles.forEach(file => {
+          report += `- ${file}\n`;
+        });
+      } else {
+        report += "- No files changed\n";
+      }
+      report += "\n";
+      
+      // 2. Asset level Impacts section (only if asset keys are requested)
+      const hasAssetKeys = configurableKeys.showDirectAssetCount || configurableKeys.showIndirectAssetCount || 
+                           configurableKeys.showDirectAssetList || configurableKeys.showIndirectAssetList;
+      
+      if (hasAssetKeys) {
+        report += "### Asset level Impacts\n";
         
-        content += `#### Directly Impacted (${direct.length})\n`;
-        direct.forEach(model => {
-          const url = constructItemUrl(model, dqlabs_createlink_url);
-          const modelName = model?.name || 'Unknown';
+        // Calculate totals
+        const totalDirectAssets = Object.values(fileImpacts).reduce((sum, impacts) => sum + impacts.direct.length, 0);
+        const totalIndirectAssets = Object.values(fileImpacts).reduce((sum, impacts) => sum + impacts.indirect.length, 0);
+        
+        // Show count keys first
+        if (configurableKeys.showDirectAssetCount) {
+          report += `- **Total Directly Impacted:** ${totalDirectAssets}\n`;
+        }
+        if (configurableKeys.showIndirectAssetCount) {
+          report += `- **Total Indirectly Impacted:** ${totalIndirectAssets}\n`;
+        }
+        
+        // Show list keys second (as collapsible sections)
+        if (configurableKeys.showDirectAssetList) {
+          const directAssets = [];
+          Object.entries(fileImpacts).forEach(([filePath, impacts]) => {
+            impacts.direct.forEach(model => {
+              const url = constructItemUrl(model, dqlabs_createlink_url);
+              const modelName = model?.name || 'Unknown';
+              if (model?.connection_id && url !== "#") {
+                directAssets.push(`- [${modelName}](${url})`);
+              } else {
+                directAssets.push(`- ${modelName}`);
+              }
+            });
+          });
           
-          // Check if we have connection_id for clickable link
-          if (model?.connection_id && url !== "#") {
-            content += `- [${modelName}](${url})\n`;
-          } else {
-            content += `- ${modelName}\n`;
+          if (directAssets.length > 0) {
+            report += `\n<details>\n<summary><b>Directly Impacted Assets (${directAssets.length})</b></summary>\n\n`;
+            report += directAssets.join('\n') + '\n';
+            report += `</details>\n`;
           }
-        });
-
-        content += `\n#### Indirectly Impacted (${indirect.length})\n`;
-        indirect.forEach(model => {
-          const url = constructItemUrl(model, dqlabs_createlink_url);
-          const modelName = model?.name || 'Unknown';
+        }
+        
+        if (configurableKeys.showIndirectAssetList) {
+          const indirectAssets = [];
+          Object.entries(fileImpacts).forEach(([filePath, impacts]) => {
+            impacts.indirect.forEach(model => {
+              const url = constructItemUrl(model, dqlabs_createlink_url);
+              const modelName = model?.name || 'Unknown';
+              if (model?.connection_id && url !== "#") {
+                indirectAssets.push(`- [${modelName}](${url})`);
+              } else {
+                indirectAssets.push(`- ${modelName}`);
+              }
+            });
+          });
           
-          // Check if we have connection_id for clickable link
-          if (model?.connection_id && url !== "#") {
-            content += `- [${modelName}](${url})\n`;
-          } else {
-            content += `- ${modelName}\n`;
+          if (indirectAssets.length > 0) {
+            report += `\n<details>\n<summary><b>Indirectly Impacted Assets (${indirectAssets.length})</b></summary>\n\n`;
+            report += indirectAssets.join('\n') + '\n';
+            report += `</details>\n`;
           }
-        });
-
-        content += '\n\n';
-      });
-
-      const totalImpacts = totalDirect + totalIndirect;
-      const shouldCollapse = totalImpacts > 20;
-
-      if (shouldCollapse) {
-        return `<details>
-<summary><b>Impact Analysis (${totalImpacts} total impacts - ${Object.keys(fileImpacts).length} files changed) - Click to expand</b></summary>
-
-${content}
-</details>`;
+        }
+        
+        report += "\n";
       }
       
-      return content;
+      // 3. Column level Impacts section (only if column keys are requested)
+      const hasColumnKeys = configurableKeys.showDirectColumnCount || configurableKeys.showIndirectColumnCount || 
+                           configurableKeys.showDirectColumnList || configurableKeys.showIndirectColumnList;
+      
+      if (hasColumnKeys) {
+        report += "### Column level Impacts\n";
+        
+        // Calculate totals
+        const totalDirectColumns = Object.values(columnImpacts).reduce((sum, impacts) => sum + impacts.direct.length, 0);
+        const totalIndirectColumns = Object.values(columnImpacts).reduce((sum, impacts) => sum + impacts.indirect.length, 0);
+        
+        // Show count keys first
+        if (configurableKeys.showDirectColumnCount) {
+          report += `- **Total Directly Impacted Columns:** ${totalDirectColumns}\n`;
+        }
+        if (configurableKeys.showIndirectColumnCount) {
+          report += `- **Total Indirectly Impacted Columns:** ${totalIndirectColumns}\n`;
+        }
+        
+        // Show list keys second (as collapsible sections)
+        if (configurableKeys.showDirectColumnList) {
+          const directColumns = [];
+          Object.entries(columnImpacts).forEach(([filePath, impacts]) => {
+            impacts.direct.forEach(column => {
+              const url = constructColumnUrl(column, dqlabs_createlink_url);
+              const columnName = `${column?.table_name || 'Unknown'}.${column?.column_name || 'Unknown'}`;
+              if (column?.connection_id && url !== "#") {
+                directColumns.push(`- [${columnName}](${url}) - *${column?.impact_type || 'Referenced'}* (${column?.data_type || 'Unknown Type'})`);
+              } else {
+                directColumns.push(`- ${columnName} - *${column?.impact_type || 'Referenced'}* (${column?.data_type || 'Unknown Type'})`);
+              }
+            });
+          });
+          
+          if (directColumns.length > 0) {
+            report += `\n<details>\n<summary><b>Directly Impacted Columns (${directColumns.length})</b></summary>\n\n`;
+            report += directColumns.join('\n') + '\n';
+            report += `</details>\n`;
+          }
+        }
+        
+        if (configurableKeys.showIndirectColumnList) {
+          const indirectColumns = [];
+          Object.entries(columnImpacts).forEach(([filePath, impacts]) => {
+            impacts.indirect.forEach(column => {
+              const url = constructColumnUrl(column, dqlabs_createlink_url);
+              const columnName = `${column?.table_name || 'Unknown'}.${column?.column_name || 'Unknown'}`;
+              if (column?.connection_id && url !== "#") {
+                indirectColumns.push(`- [${columnName}](${url}) - *${column?.impact_type || 'Referenced'}* (${column?.data_type || 'Unknown Type'})`);
+              } else {
+                indirectColumns.push(`- ${columnName} - *${column?.impact_type || 'Referenced'}* (${column?.data_type || 'Unknown Type'})`);
+              }
+            });
+          });
+          
+          if (indirectColumns.length > 0) {
+            report += `\n<details>\n<summary><b>Indirectly Impacted Columns (${indirectColumns.length})</b></summary>\n\n`;
+            report += indirectColumns.join('\n') + '\n';
+            report += `</details>\n`;
+          }
+        }
+        
+        report += "\n";
+      }
+      
+      return report;
     };
 
-    // Build column-level impacts section with fallback analysis
-    const buildColumnImpactsSection = (columnImpacts) => {
-      let content = '';
-      let totalDirect = 0;
-      let totalIndirect = 0;
-      let hasColumnChanges = false;
-      
-      // Generate content for each file with column changes
-      Object.entries(columnImpacts).forEach(([filePath, impacts]) => {
-        const { direct, indirect, taskName, changedColumns } = impacts;
-        
-        if (changedColumns.length === 0) return; // Skip files with no column changes
-        
-        hasColumnChanges = true;
-        totalDirect += direct.length;
-        totalIndirect += indirect.length;
 
-        content += `### File: ${filePath}\n`;
-        content += `**Model:** ${taskName}\n`;
-        content += `**Changed Columns:** ${changedColumns.join(', ')}\n\n`;
-        
-        if (direct.length > 0) {
-          content += `#### Directly Impacted Columns (${direct.length})\n`;
-          direct.forEach(column => {
-            const url = constructColumnUrl(column, dqlabs_createlink_url);
-            const columnName = `${column?.table_name || 'Unknown'}.${column?.column_name || 'Unknown'}`;
-            
-            // Check if we have connection_id for clickable link
-            if (column?.connection_id && url !== "#") {
-              content += `- [${columnName}](${url}) - *${column?.impact_type || 'Referenced'}* (${column?.data_type || 'Unknown Type'})\n`;
-            } else {
-              content += `- ${columnName} - *${column?.impact_type || 'Referenced'}* (${column?.data_type || 'Unknown Type'})\n`;
-            }
-          });
-        } else {
-          content += `#### Directly Impacted Columns (0)\n`;
-          content += `*No direct column impacts detected via DQLabs API*\n`;
-        }
-
-        if (indirect.length > 0) {
-          content += `\n#### Indirectly Impacted Columns (${indirect.length})\n`;
-          indirect.forEach(column => {
-            const url = constructColumnUrl(column, dqlabs_createlink_url);
-            const columnName = `${column?.table_name || 'Unknown'}.${column?.column_name || 'Unknown'}`;
-            
-            // Check if we have connection_id for clickable link
-            if (column?.connection_id && url !== "#") {
-              content += `- [${columnName}](${url}) - *${column?.impact_type || 'Referenced'}* (${column?.data_type || 'Unknown Type'})\n`;
-            } else {
-              content += `- ${columnName} - *${column?.impact_type || 'Referenced'}* (${column?.data_type || 'Unknown Type'})\n`;
-            }
-          });
-        } else {
-          content += `\n#### Indirectly Impacted Columns (0)\n`;
-          content += `*No indirect column impacts detected via DQLabs API*\n`;
-        }
-
-        content += '\n\n';
-      });
-
-      // If we have column changes but no impacts detected, provide a more informative message
-      if (hasColumnChanges && totalDirect === 0 && totalIndirect === 0) {
-        return `## Column-Level Impact Analysis\n\n**⚠️ Column changes detected but no impacts found via DQLabs API.**\n\nThis could indicate:\n- The DQLabs lineage data may not be up-to-date\n- Column-level lineage might not be fully configured\n- The changed columns may not have downstream dependencies\n- API connectivity or authentication issues\n\n**Recommendation:** Check the DQLabs platform directly to verify column-level impacts.\n\n`;
-      }
-
-      if (!hasColumnChanges) {
-        return '## Column-Level Impact Analysis\n\n**No column changes detected in SQL files.**\n\n';
-      }
-
-      const totalImpacts = totalDirect + totalIndirect;
-      const shouldCollapse = totalImpacts > 15;
-
-      if (shouldCollapse) {
-        return `<details>
-<summary><b>Column-Level Impact Analysis (${totalImpacts} total column impacts - ${Object.keys(columnImpacts).filter(f => columnImpacts[f].changedColumns.length > 0).length} files with column changes) - Click to expand</b></summary>
-
-${content}
-</details>`;
-      }
-      
-      return `## Column-Level Impact Analysis\n\n${content}`;
-    };
-
-    // Add impacts to summary
-    summary += buildImpactsSection(fileImpacts);
-    
-    // Add column-level impacts to summary
-    summary += buildColumnImpactsSection(columnImpacts);
-    
-    // Add summary of total impacts
-    const totalDirect = Object.values(fileImpacts).reduce((sum, impacts) => sum + impacts.direct.length, 0);
-    const totalIndirect = Object.values(fileImpacts).reduce((sum, impacts) => sum + impacts.indirect.length, 0);
-    
-    // Add column-level impact statistics
-    const totalColumnDirect = Object.values(columnImpacts).reduce((sum, impacts) => sum + impacts.direct.length, 0);
-    const totalColumnIndirect = Object.values(columnImpacts).reduce((sum, impacts) => sum + impacts.indirect.length, 0);
-    const filesWithColumnChanges = Object.keys(columnImpacts).filter(f => columnImpacts[f].changedColumns.length > 0).length;
-    
-    summary += `\n## Summary of Impacts\n`;
-    summary += `### Model-Level Impacts\n`;
-    summary += `- **Total Directly Impacted:** ${totalDirect}\n`;
-    summary += `- **Total Indirectly Impacted:** ${totalIndirect}\n`;
-    summary += `- **Files Changed:** ${Object.keys(fileImpacts).length}\n\n`;
-    summary += `### Column-Level Impacts\n`;
-    summary += `- **Total Directly Impacted Columns:** ${totalColumnDirect}\n`;
-    summary += `- **Total Indirectly Impacted Columns:** ${totalColumnIndirect}\n`;
-    summary += `- **Files with Column Changes:** ${filesWithColumnChanges}\n\n`;
-
-    // Process column changes
-    const processColumnChanges = async (extension, extractor, isYml = false) => {
+    // Process column changes function for YML files
+    const processColumnChanges = async (extension, extractor) => {
       const changes = [];
       let added = [];
       let removed = [];
@@ -766,37 +847,24 @@ ${content}
           const baseCols = safeArray(baseContent ? extractor(baseContent, file) : []);
           const headCols = safeArray(extractor(headContent, file));
 
-          // Handle YML columns differently
-          if (isYml) {
-            // Extract just the names for comparison
-            const baseColNames = baseCols.map(col => col.name);
-            const headColNames = headCols.map(col => col.name);
+          // Handle YML columns (Coalesce format)
+          // Extract just the names for comparison
+          const baseColNames = baseCols.map(col => col.name);
+          const headColNames = headCols.map(col => col.name);
 
-            const addedCols = headCols.filter(col => !baseColNames.includes(col.name));
-            const removedCols = baseCols.filter(col => !headColNames.includes(col.name));
+          const addedCols = headCols.filter(col => !baseColNames.includes(col.name));
+          const removedCols = baseCols.filter(col => !headColNames.includes(col.name));
 
-            // Get full column info for added/removed
-            added.push(...addedCols);
-            removed.push(...removedCols);
+          // Get full column info for added/removed
+          added.push(...addedCols);
+          removed.push(...removedCols);
 
-            if (addedCols.length > 0 || removedCols.length > 0) {
-              changes.push({ 
-                file, 
-                added: addedCols.map(c => c.name),
-                removed: removedCols.map(c => c.name)
-              });
-            }
-          } else {
-            // Original SQL comparison logic
-            const addedCols = headCols.filter(col => !baseCols.includes(col));
-            const removedCols = baseCols.filter(col => !headCols.includes(col));
-
-            added.push(...addedCols);
-            removed.push(...removedCols);
-
-            if (addedCols.length > 0 || removedCols.length > 0) {
-              changes.push({ file, added: addedCols, removed: removedCols });
-            }
+          if (addedCols.length > 0 || removedCols.length > 0) {
+            changes.push({ 
+              file, 
+              added: addedCols.map(c => c.name),
+              removed: removedCols.map(c => c.name)
+            });
           }
         } catch (error) {
           core.error(`Error processing ${file}: ${error.message}`);
@@ -806,30 +874,237 @@ ${content}
       return { changes, added, removed };
     };
 
-    // Process SQL changes
-    const { added: sqlAdded, removed: sqlRemoved } = await processColumnChanges(".sql", extractColumnsFromSQL);
-    summary += `\n### SQL Column Changes\n`;
-    summary += `Added columns(${sqlAdded.length}): ${sqlAdded.join(', ')}\n`;
-    summary += `Removed columns(${sqlRemoved.length}): ${sqlRemoved.join(', ')}\n`;
+    // Process YML column changes only (Coalesce YML files)
+    const { added: ymlAdded, removed: ymlRemoved } = await processColumnChanges(".yml", (content, file) => extractColumnsFromYML(content, file));
+    
+    // Build the new simplified report
+    summary = buildNewAnalysisReport(fileImpacts, columnImpacts, changedFiles);
+    
+    // Add YML Column Changes section (conditional)
+    const showYmlSection = configurableKeys.showYmlColumnsAdded || configurableKeys.showYmlColumnsRemoved;
+    if (showYmlSection) {
+      summary += "### YML Column Changes\n";
+      if (configurableKeys.showYmlColumnsAdded) {
+        summary += `Added columns(${ymlAdded.length}): ${ymlAdded.map(c => c.name).join(', ')}\n`;
+      }
+      if (configurableKeys.showYmlColumnsRemoved) {
+        summary += `Removed columns(${ymlRemoved.length}): ${ymlRemoved.map(c => c.name).join(', ')}\n`;
+      }
+      summary += "\n";
+    }
 
-    // Process YML changes
-    const { added: ymlAdded, removed: ymlRemoved } = await processColumnChanges(".yml", (content, file) => extractColumnsFromYML(content, file), true);
-    summary += `\n### YML Column Changes\n`;
-    summary += `Added columns(${ymlAdded.length}): ${ymlAdded.map(c => c.name).join(', ')}\n`;
-    summary += `Removed columns(${ymlRemoved.length}): ${ymlRemoved.map(c => c.name).join(', ')}\n`;
+    // Generate comprehensive JSON file with all data (regardless of configurable keys)
+    const generateComprehensiveJSON = (fileImpacts, columnImpacts, changedFiles, ymlAdded, ymlRemoved) => {
+      const jsonData = {
+        metadata: {
+          timestamp: new Date().toISOString(),
+          commit_sha: github.context.sha,
+          pull_request_number: github.context.payload.pull_request?.number || null,
+          configurable_keys_used: dqlabs_configurable_keys ? dqlabs_configurable_keys.split(',').map(k => k.trim()) : [],
+          dqlabs_base_url: dqlabs_base_url,
+          analysis_type: "coalesce_yml_impact_analysis"
+        },
+        changed_files: changedFiles,
+        asset_impacts: {
+          direct: [],
+          indirect: []
+        },
+        column_impacts: {
+          direct: [],
+          indirect: []
+        },
+        yml_column_changes: {
+          added: ymlAdded.map(c => c.name),
+          removed: ymlRemoved.map(c => c.name)
+        },
+        summary: {
+          total_direct_assets: 0,
+          total_indirect_assets: 0,
+          total_direct_columns: 0,
+          total_indirect_columns: 0,
+          total_yml_added: ymlAdded.length,
+          total_yml_removed: ymlRemoved.length,
+          total_changed_files: changedFiles.length
+        }
+      };
 
-    // Post comment
+      // Process file impacts
+      Object.entries(fileImpacts).forEach(([filePath, impacts]) => {
+        impacts.direct.forEach(model => {
+          const redirectUrl = constructItemUrl(model, dqlabs_createlink_url);
+          jsonData.asset_impacts.direct.push({
+            file_path: filePath,
+            model_name: model.name,
+            task_name: impacts.taskName,
+            redirect_url: redirectUrl
+          });
+        });
+
+        impacts.indirect.forEach(model => {
+          const redirectUrl = constructItemUrl(model, dqlabs_createlink_url);
+          jsonData.asset_impacts.indirect.push({
+            file_path: filePath,
+            model_name: model.name,
+            task_name: impacts.taskName,
+            redirect_url: redirectUrl
+          });
+        });
+      });
+
+      // Process column impactsa
+      Object.entries(columnImpacts).forEach(([filePath, impacts]) => {
+        impacts.direct.forEach(column => {
+          const redirectUrl = constructColumnUrl(column, dqlabs_createlink_url);
+          jsonData.column_impacts.direct.push({
+            file_path: filePath,
+            table_name: column.table_name,
+            column_name: column.column_name,
+            data_type: column.data_type,
+            task_name: impacts.taskName,
+            redirect_url: redirectUrl
+          });
+        });
+
+        impacts.indirect.forEach(column => {
+          const redirectUrl = constructColumnUrl(column, dqlabs_createlink_url);
+          jsonData.column_impacts.indirect.push({
+            file_path: filePath,
+            table_name: column.table_name,
+            column_name: column.column_name,
+            data_type: column.data_type,
+            task_name: impacts.taskName,
+            redirect_url: redirectUrl
+          });
+        });
+      });
+
+      // Calculate summary totals
+      jsonData.summary.total_direct_assets = jsonData.asset_impacts.direct.length;
+      jsonData.summary.total_indirect_assets = jsonData.asset_impacts.indirect.length;
+      jsonData.summary.total_direct_columns = jsonData.column_impacts.direct.length;
+      jsonData.summary.total_indirect_columns = jsonData.column_impacts.indirect.length;
+
+      return {
+        jsonString: JSON.stringify(jsonData, null, 2),
+        jsonObject: jsonData
+      };
+    };
+
+    // Generate comprehensive JSON data
+    const { jsonString: comprehensiveJsonData, jsonObject: comprehensiveJsonObject } = generateComprehensiveJSON(fileImpacts, columnImpacts, changedFiles, ymlAdded, ymlRemoved);
+
+    // Send metadata to DQLabs API endpoint
+    const sendMetadataToDQLabs = async (comprehensiveJsonObject) => {
+      try {
+        if (!dqlabs_base_url) {
+          core.warning('[sendMetadataToDQLabs] DQLabs base URL not provided, skipping metadata upload');
+          return;
+        }
+
+        const metadataUrl = `${dqlabs_base_url}/api/lineage/github_action_metadata/`;
+        core.info(`[sendMetadataToDQLabs] Sending metadata to dqlabs: ${metadataUrl}`);
+        
+        const payload = {
+          markdown_report: comprehensiveJsonObject,
+          metadata: {
+            timestamp: new Date().toISOString(),
+            commit_sha: github.context.sha,
+            pull_request_number: github.context.payload.pull_request?.number || null,
+            pull_request_url: github.context.payload.pull_request?.html_url || null,
+            repository: github.context.repo.repo,
+            owner: github.context.repo.owner,
+            branch: github.context.payload.pull_request?.head?.ref || null,
+            base_branch: github.context.payload.pull_request?.base?.ref || null,
+            workflow_run_id: github.context.runId || null,
+            workflow_run_url: github.context.payload.repository?.html_url ? 
+              `${github.context.payload.repository.html_url}/actions/runs/${github.context.runId}` : null
+          },
+          changed_files: changedFiles,
+          configurable_keys: dqlabs_configurable_keys ? dqlabs_configurable_keys.split(',').map(k => k.trim()) : []
+        };
+
+        core.info(`[sendMetadataToDQLabs] Sending metadata to: ${metadataUrl}`);
+        
+        const response = await axios.post(metadataUrl, payload, {
+          headers: {
+            "Content-Type": "application/json",
+            "client-id": clientId,
+            "client-secret": clientSecret,
+          },
+        });
+
+        core.info(`[sendMetadataToDQLabs] Successfully sent metadata. Status: ${response.status}`);
+        if (response.data) {
+          core.info(`[sendMetadataToDQLabs] Response: ${JSON.stringify(response.data)}`);
+        }
+      } catch (error) {
+        core.error(`[sendMetadataToDQLabs] Error sending metadata: ${error.message}`);
+        if (error.response) {
+          core.error(`[sendMetadataToDQLabs] Response status: ${error.response.status}`);
+          core.error(`[sendMetadataToDQLabs] Response data: ${JSON.stringify(error.response.data)}`);
+        }
+        // Don't fail the entire workflow if metadata upload fails
+        core.warning('[sendMetadataToDQLabs] Continuing despite metadata upload failure');
+      }
+    };
+
+    // Send metadata to DQLabs endpoint (JSON report object)
+    await sendMetadataToDQLabs(comprehensiveJsonObject);
+
+    // Post or update comment
     if (github.context.payload.pull_request) {
       try {
         const octokit = github.getOctokit(githubToken);
-        await octokit.rest.issues.createComment({
-          owner: github.context.repo.owner,
-          repo: github.context.repo.repo,
-          issue_number: github.context.payload.pull_request.number,
-          body: summary,
+        const { owner, repo } = github.context.repo;
+        const issue_number = github.context.payload.pull_request.number;
+        
+        // Get existing comments to find our bot's comment
+        const comments = await octokit.rest.issues.listComments({
+          owner,
+          repo,
+          issue_number,
         });
+        
+        // Find existing comment from github-actions[bot] with our impact analysis
+        const existingComment = comments.data.find(comment => 
+          comment.user.type === 'Bot' && 
+          comment.user.login === 'github-actions[bot]' &&
+          comment.body.includes('## Impact Analysis Report')
+        );
+        
+        // Add JSON data as collapsible section
+        let finalSummary = summary;
+        finalSummary += "\n### 📎 Complete Impact Analysis Data\n";
+        finalSummary += `<details>\n<summary><b>View Complete JSON Data</b></summary>\n\n`;
+        finalSummary += "```json\n";
+        finalSummary += comprehensiveJsonData;
+        finalSummary += "\n```\n\n";
+        finalSummary += "*This JSON contains all impact analysis data regardless of display preferences.*\n";
+        finalSummary += `</details>\n\n`;
+        
+        // Create or update comment with the JSON data
+        if (existingComment) {
+          core.info(`Updating existing comment ${existingComment.id} with JSON data`);
+          await octokit.rest.issues.updateComment({
+            owner,
+            repo,
+            comment_id: existingComment.id,
+            body: finalSummary,
+          });
+          core.info('Successfully updated existing impact analysis comment');
+        } else {
+          core.info('Creating new impact analysis comment with JSON data');
+          await octokit.rest.issues.createComment({
+            owner,
+            repo,
+            issue_number,
+            body: finalSummary,
+          });
+          core.info('Successfully created new impact analysis comment');
+        }
+        
       } catch (error) {
-        core.error(`Failed to create comment: ${error.message}`);
+        core.error(`Failed to post/update comment: ${error.message}`);
       }
     }
 
