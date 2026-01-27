@@ -95,7 +95,7 @@ const getChangedFiles = async () => {
 
 const getTasks = async () => {
   try {
-    const taskUrl = `${dqlabs_base_url}api/pipeline/job/`;
+    const taskUrl = `${dqlabs_base_url}api/pipeline/task/`;
     const payload = {
       chartType: 0,
       search: {},
@@ -478,7 +478,7 @@ const run = async () => {
       const impactData = await getImpactAnalysisData(
         task.asset_id,
         task.connection_id,
-        task.asset_id,
+        task.id,
         false // isDirect = false to get both direct and indirect
       );
 
