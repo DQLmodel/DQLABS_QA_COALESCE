@@ -544,7 +544,7 @@ const run = async () => {
         const directColumnImpact = await getColumnLevelImpactAnalysis(
           task.asset_id,
           task.connection_id,
-          task.asset_id,
+          task.task_id,
           taskChangedColumns,
           true // isDirect = true
         );
@@ -562,7 +562,7 @@ const run = async () => {
         const indirectColumnImpact = await getColumnLevelImpactAnalysis(
           task.asset_id,
           task.connection_id,
-          task.asset_id,
+          task.task_id,
           taskChangedColumns,
           false // isDirect = false
         );
