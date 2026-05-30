@@ -4,7 +4,7 @@ name: /TOY/STORE001
 operation:
   database: ""
   deployEnabled: true
-  description: ""
+  description: Check the table
   locationName: SRC
   metadata:
     columns:

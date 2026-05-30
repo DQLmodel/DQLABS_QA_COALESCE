@@ -1,0 +1,6 @@
+excludeSelector: ""
+fileVersion: 1
+id: "20"
+includeSelector: "{subgraph:custom_a} "
+name: QA_JOBS
+type: Job
